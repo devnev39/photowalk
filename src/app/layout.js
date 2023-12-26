@@ -1,6 +1,6 @@
 
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
-import Nav from '../../components/Nav'
+import Nav from '../components/Nav'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
