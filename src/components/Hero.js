@@ -31,7 +31,6 @@ const Hero = () => {
           <div className="wrapper">
             <img src="/photographer.png" className="cover-image" />
           </div>
-          <img src="/photowalk.png" className="title" />
           <img src="/bird.png" className="character" />
         </div>
       </Grid>
