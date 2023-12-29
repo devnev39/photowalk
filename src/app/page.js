@@ -1,10 +1,14 @@
+// import GallerySection from "../components/GallerySection";
+
+import GallerySection from "@/components/GallerySection";
 import Hero from "@/components/Hero";
-import styles from "./page.module.css";
+
 
 export default function Home() {
   return (
-    <div>
+    <>
       <Hero />
-    </div>
+      <GallerySection />
+    </>
   );
 }
