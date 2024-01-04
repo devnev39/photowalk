@@ -2,6 +2,7 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import Nav from '../components/Nav'
 import { Inter } from 'next/font/google'
+import Footer from "@/components/Footer";
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
             <div className='gradient' />
           </div>
         <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+        <Footer />
       </body>    
     </html>
   )

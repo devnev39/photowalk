@@ -2,7 +2,10 @@
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import "../app/gallerystyles.css";
 
+
 const GallerySection = () => {
+
+
   return (
     <Grid container spacing={1} sx={{ textAlign: 'center', mt: 8, mb: 5 }}>
       <Grid item xs={12}>
