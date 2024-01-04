@@ -41,7 +41,7 @@
         </Typography>
         <Slider {...settings}>
           {destinations.map((destination) => (
-            <Card key={destination.id}>
+            <Card key={destination.id} style={{ margin: '10px' }}>
               <CardActionArea>
                 <CardMedia component="img" height="400" image={destination.imageSrc} alt={destination.name} />
                 <CardContent>
@@ -58,5 +58,3 @@
   };
 
   export default Destinations;
-
-
