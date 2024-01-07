@@ -8,6 +8,7 @@ import './globals.css'
 import { AuthContextProvider } from '@/config/AuthContext';
 import { ErrorContext } from '@/context/ErrorContext';
 import Error from '@/components/Error';
+import { DialogContext } from '@/context/DialogContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AuthContextProvider>
+          <DialogContext>
           <ErrorContext>
           <Nav />
             <div className='main'>
@@ -30,6 +32,7 @@ export default function RootLayout({ children }) {
           <Error />
           <Footer />
           </ErrorContext>
+          </DialogContext>
         </AuthContextProvider>
       </body>    
     </html>
