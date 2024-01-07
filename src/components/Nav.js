@@ -10,12 +10,14 @@ import {
   ListItem,
 } from "@mui/material";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
+import { UserAuth } from "@/config/AuthContext";
+import { useAppError } from "@/context/ErrorContext";
 
 const navItems = [
   {
@@ -33,7 +35,7 @@ const navItems = [
   {
     text: "About",
     link: "/about",
-  },
+  }
 ];
 
 const navStyle = {
@@ -43,10 +45,27 @@ const navStyle = {
 
 export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, googleSignIn, logout } = UserAuth();
+  const {setOpen, setMessage, setSeverity} = useAppError();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+
+  const handleAuth = async () => {
+    try {
+      if(user){
+        await logout();
+      }
+      else {
+        await googleSignIn();
+      }
+    } catch (error) {
+      setMessage(error.message);
+      setSeverity("error");
+      setOpen(true);
+    }
+  }
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -62,6 +81,11 @@ export default function Nav() {
             </ListItemButton>
           </ListItem>
         ))}
+        <ListItem disablePadding>
+          <ListItemButton sx={{ textAlign: 'center' }} onClick={handleAuth}>
+            <ListItemText primary={user ? "Logout" : "Login"} />
+          </ListItemButton>
+        </ListItem>
       </List>
     </Box>
   );
@@ -106,6 +130,7 @@ export default function Nav() {
             {navItems.map((item) => (
               <Button key={item.text}>{item.text}</Button>
             ))}
+           <Button onClick={handleAuth}>{user ? "Logout" : "Login"}</Button> 
           </Box>
         </Toolbar>
       </AppBar>
