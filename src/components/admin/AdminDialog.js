@@ -14,6 +14,9 @@ export default function AdminDialog({ handleClose, updateUsers, userObj, setFocu
 
     const [changed, setChanged] = useState(false);
 
+    let currentDate = new Date();
+    currentDate.setMinutes(currentDate.getMinutes() - currentDate.getTimezoneOffset())
+
     const [user, setUser] = useState(!userObj ? {
         email: "",
         role: "",
@@ -35,7 +38,7 @@ export default function AdminDialog({ handleClose, updateUsers, userObj, setFocu
     const submit = async () => {
         try {
             setSubmitting(true);
-            user.created_at = new Date().toISOString();
+            user.created_at = currentDate.toISOString();
             const userRef = doc(db, "users", user.email);
             await setDoc(userRef, user);
             setSubmitting(false);
@@ -55,7 +58,7 @@ export default function AdminDialog({ handleClose, updateUsers, userObj, setFocu
     const update = async () => {
         try {
             setSubmitting(true);
-            user.updated_at = new Date().toISOString();
+            user.updated_at = currentDate.toISOString();
             user.updated_by = appUser;
 
             const docRef = doc(db, "users", user.email);

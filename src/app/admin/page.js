@@ -66,7 +66,7 @@ export default function Page() {
                     console.log(u);
                     setAdmin(u);
                 }else{
-                    setMessage("User not found !");
+                    setMessage("User not found ! Logging out !");
                     setSeverity("error");
                     setOpen(true);
                     logout();

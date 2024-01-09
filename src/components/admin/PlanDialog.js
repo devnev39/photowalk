@@ -22,6 +22,7 @@ export default function PlanDialog({
         updated_by: {},
         updated_at: "",
         created_at: "",
+        plan_datetime: "",
         is_open: false,
     } : planObj);
 
@@ -33,10 +34,13 @@ export default function PlanDialog({
 
     const {showMessage} = useAppError();
 
+    let currentDate = new Date();
+    currentDate.setMinutes(currentDate.getMinutes() - currentDate.getTimezoneOffset())
+
     const submit = async () => {
         try {
             setSubmitting(true);
-            plan.created_at = new Date().toISOString();
+            plan.created_at = currentDate.toISOString();
             plan.created_by = appUser;
             const docRef = doc(db,"plans",plan.name);
             await setDoc(docRef, plan);
@@ -57,7 +61,7 @@ export default function PlanDialog({
     const update = async () => {
         try {
             setSubmitting(true);
-            plan.updated_at = new Date().toISOString();
+            plan.updated_at = currentDate.toISOString();
             plan.updated_by = appUser;
             const docRef = doc(db, "plans", plan.name);
             await updateDoc(docRef, plan);
@@ -132,6 +136,19 @@ export default function PlanDialog({
             variant='standard'
             sx={{my: 3}}
             onChange={(event) => setPlan(current => {return { ...current, tag: event.target.value}})}
+            />
+            <TextField 
+            autoFocus
+            error={plan.plan_datetime == ""}
+            // value={plan.plan_datetime ? new Date(plan.plan_datetime) : new Date().toISOString()}
+            // value={plan.plan_datetime == "" ? currentDate.toISOString().split(".")[0] : new Date().toISOString().split(".")[0]}
+            value={plan.plan_datetime}
+            label="Plan Date"
+            type='datetime-local'
+            fullWidth
+            variant='standard'
+            sx={{my: 3}}
+            onChange={(event) => setPlan(current => {return { ...current, plan_datetime: event.target.value}})}
             />
             <FormControlLabel
             value="is_opeb"

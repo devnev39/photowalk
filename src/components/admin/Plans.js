@@ -65,7 +65,7 @@ export default function Plans({
             renderCell:(index) => index.api.getRowIndexRelativeToVisibleRows(index.row.name) + 1,
             width: 50
         },
-        { field: 'name', headerName: 'Name', width: 100, editable: true },
+        { field: 'name', headerName: 'Name', width: 100 },
         {
           field: 'description',
           headerName: 'Description',
@@ -73,7 +73,6 @@ export default function Plans({
           width: 200,
           align: 'left',
           headerAlign: 'left',
-          editable: true,
         },
         {
           field: 'distance',
@@ -82,34 +81,30 @@ export default function Plans({
           align: "left",
           width: 100,
           headerAlign: "left",
-          editable: true,
         },
         {
           field: 'tag',
           headerName: 'Tag',
           width: 100,
-          editable: true,
           type: 'text'
         },
         {
             field: 'is_open',
             headerName: 'Open To All',
             width: 100,
-            editable: true,
             type: 'bool',
             renderCell: RenderCheckBox,
             renderEditCell: RenderCheckBoxEdit
         },
         {
-            field: "created_at",
-            headerName: "Created At",
-            type:"date",
+            field: "plan_datetime",
+            headerName: "Plan Date",
+            type:"datetime-local",
             headerAlign: "left",
             align: "left",
-            editable: true,
-            width: 150,
+            width: 250,
             valueGetter: (params) => {
-                return new Date(params.row.created_at)
+                return new Date(params.row.plan_datetime).toLocaleString()
             }
         },
         {
