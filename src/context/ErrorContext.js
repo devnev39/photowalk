@@ -15,8 +15,14 @@ export const ErrorContext = ({children}) => {
         setOpen(false);
     };
 
+    const showMessage = (msg, sev) => {
+        setMessage(msg);
+        setSeverity(sev);
+        setOpen(true);
+    }
+
     return (
-        <ErrorContextProvier.Provider value={{setMessage, message, open, setOpen, handleClick, handleClose, severity, setSeverity}}>
+        <ErrorContextProvier.Provider value={{showMessage, setMessage, message, open, setOpen, handleClick, handleClose, severity, setSeverity}}>
             {children}
         </ErrorContextProvier.Provider>
     )

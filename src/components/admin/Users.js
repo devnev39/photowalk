@@ -1,9 +1,10 @@
 const { Checkbox, IconButton } = require("@mui/material");
 import { UserAuth } from '@/config/AuthContext';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteDoc, doc, getDocs } from 'firebase/firestore';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import EditIcon from '@mui/icons-material/Edit';
+import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAppError } from '@/context/ErrorContext';
 
@@ -30,33 +31,15 @@ function RenderCheckBox(props) {
     );
 }
 
-function renderActionButton(props, updateUsers, errorProps) {
-    const deleteUser = async () => {
-        try {
-            await deleteDoc(doc(db, "users", props.row.email));
-            await updateUsers();
-            errorProps.setMessage("User deleted successfully !");
-            errorProps.setSeverity("info");
-            errorProps.setOpen(true);
-        } catch (error) {
-            errorProps.setMessage(error.message);
-            errorProps.setSeverity("error");
-            errorProps.setOpen(true); 
-        }
-    }
-    return (
-        <IconButton onClick={deleteUser}>
-            <DeleteIcon />
-        </IconButton>
-    )
-}
-
-export default function Users( {users, updateUsers} ) {
+export default function Users( {users, updateUsers, openUserEditDialog, setFocusedUser} ) {
     const { user } = UserAuth();
     const [columns, setColumns] = useState([]);
+    const {showMessage} = useAppError();
 
-    const errorProps = useAppError();
-
+    useEffect(() => {
+        console.log(users);
+    },[users]);
+    
     let userColumns = [
         {
             field: 'id' , 
@@ -93,24 +76,65 @@ export default function Users( {users, updateUsers} ) {
             renderCell: RenderCheckBox
         },
         {
-            headerName: "Action",
-            renderCell: (props) => renderActionButton(props, updateUsers, errorProps)
+            headerName: "Actions",
+            type: "actions",
+            field: "actions",
+            width: 100,
+            cellClassName: "actions",
+            getActions: (props) => {
+                return [
+                    <GridActionsCellItem
+                    key={props.id}
+                    icon={<EditIcon />}
+                    label='Edit'
+                    onClick={handleEditClick(props)}
+                    color='inherit'
+                    />,
+                    <GridActionsCellItem
+                    key={props.id+'1'}
+                    icon={<DeleteIcon />}
+                    label='Delete'
+                    onClick={handleDeleteClick(props)}
+                    color='inherit'
+                    />
+                ]
+            } 
         }
     ]
 
-    useEffect(() => {
-        if(user && user.role == "superuser"){
-            setColumns(userColumns.filter(c => c.headerName != "Action"))
-        }else{
-            setColumns(userColumns);
+    const handleDeleteClick = (props) => async () =>  {
+        try {
+            await deleteDoc(doc(db, "users", props.row.email));
+            await updateUsers();
+            showMessage("User deleted !", "info");
+        } catch (error) {
+            showMessage(error.message, "error");
         }
-    },[user]);
+    }
+
+    const handleEditClick = (props) => async () => {
+        setFocusedUser(users.filter(u => u.email == props.row.email)[0]);
+        console.log(props.row.email);
+        console.log(users);
+        console.log(users.filter(u => u.email == props.row.email)[0]);
+        openUserEditDialog();
+    }
+
+    // useEffect(() => {
+    //     if(user && user.role == "superuser"){
+    //         setColumns(userColumns.filter(c => c.headerName != "Action"))
+    //     }else{
+    //         setColumns(userColumns);
+    //     }
+    // },[user]);
+
+  
     
 
     return (
         <DataGrid 
         rows={users}
-        columns={columns}
+        columns={userColumns}
         initialState={{
             pagination: {
             paginationModel: {

@@ -1,13 +1,8 @@
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
 import {
-    GridRowModes,
     DataGrid,
     GridActionsCellItem,
-    GridRowEditStopReasons,
     useGridApiContext,
   } from '@mui/x-data-grid';
   
@@ -56,7 +51,7 @@ export default function Plans({
 }) {
     const [rowModesModel, setRowModesModel] = React.useState({});
 
-    const {setMessage, setSeverity, setOpen} = useAppError();
+    const {showMessage} = useAppError();
 
     useEffect(() => {
         console.log(plans);
@@ -126,14 +121,14 @@ export default function Plans({
           getActions: ({ id }) => {
             return [
                 <GridActionsCellItem
-                key={"11"}
+                key={id}
                 icon={<EditIcon />}
                 label="Edit"
                 onClick={handleEditClick(id)}
                 color="inherit"
                 />, 
                 <GridActionsCellItem
-                    key={"112311"}
+                    key={id + "1"}
                     icon={<DeleteIcon />}
                     label="Delete"
                     onClick={handleDeleteClick(id)}
@@ -144,13 +139,6 @@ export default function Plans({
         },
       ];
     
-
-    const handleRowEditStop = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-            event.defaultMuiPrevented = true;
-        }
-    };
-
     const handleEditClick = (id) => () => {
         setFocusedPlan(plans.filter((row) => row.name == id)[0]);
         openPlanEditDialog();
@@ -160,55 +148,21 @@ export default function Plans({
         try {
             await deleteDoc(doc(db, "plans", id));
             setPlans(plans.filter((row) => row.name !== id));
-            setMessage("Plan deleted !");
-            setSeverity("info");
-            setOpen(true);
+            showMessage("Plan deleted !",  "info");
         } catch (error) {
-            setMessage(error.message);
-            setSeverity("error");
-            setOpen(true);
+            showMessage(error.message, "error");
         }
         
     };
 
-    const handleCancelClick = (id) => () => {
-        setRowModesModel({
-        ...rowModesModel,
-        [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-
-        const editedRow = plans.find((row) => row.id === id);
-        if (editedRow.isNew) {
-        setPlans(plans.filter((row) => row.id !== id));
-        }
-    };
-
-    const processRowUpdate = (newRow) => {
-        const updatedRow = { ...newRow, isNew: false };
-        setPlans(plans.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
-    };
-
-    const handleRowModesModelChange = (newRowModesModel) => {
-        setRowModesModel(newRowModesModel);
-    };
+    
 
     return (
         <DataGrid 
         rows={plans}
         columns={columns}
         editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        // slots={{
-        //   toolbar: EditToolbar,
-        // }}
         getRowId={getRowId}
-        slotProps={{
-          toolbar: { setPlans, setRowModesModel },
-        }}
         />
     )
 }

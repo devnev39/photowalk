@@ -8,7 +8,7 @@ import { db } from '@/config/firebase';
 import { useAppUserContext } from '@/context/AppUserContext';
 
 export default function PlanDialog({
-    handleClose, updatePlans, planObj
+    handleClose, updatePlans, planObj, setFocusedPlan
 }) {
     const [plan, setPlan] = useState(!planObj ? {
         name: "",
@@ -31,7 +31,7 @@ export default function PlanDialog({
 
     const { appUser } = useAppUserContext();
 
-    const {setMessage, setSeverity, setOpen} = useAppError();
+    const {showMessage} = useAppError();
 
     const submit = async () => {
         try {
@@ -45,13 +45,11 @@ export default function PlanDialog({
             setSubmitting(false);
             handleClose();
 
-            setMessage("Plan created !");
-            setSeverity("info");
-            setOpen(true);
+            setFocusedPlan(null); // Reset the focusedPlan object
+
+            showMessage("Plan created !", "info");
         } catch (error) {
-            setMessage(error.message);
-            setSeverity("error");
-            setOpen(true); 
+            showMessage(error.message,"error");
             setSubmitting(false);
         }
     }
@@ -68,13 +66,11 @@ export default function PlanDialog({
             setSubmitting(false);
             handleClose();
 
-            setMessage("Plan updated !");
-            setSeverity("info");
-            setOpen(true);
+            setFocusedPlan(null); // Reset the focusedPlan object
+
+            showMessage("Plan updated !", "info");
         } catch (error) {
-            setMessage(error.message);
-            setSeverity("error");
-            setOpen(true); 
+            showMessage(error.message, "error");
             setSubmitting(false); 
         }
     }
@@ -147,7 +143,10 @@ export default function PlanDialog({
             <Map plan={plan} setPlan={setPlan}/>
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleClose} variant='outlined'>Cancel</Button>
+            <Button onClick={() => {
+                setFocusedPlan(null);
+                handleClose();
+            }} variant='outlined'>Cancel</Button>
             <LoadingButton disabled={!changed} loading={isSubmitting} variant='outlined' onClick={planObj ? update : submit}>{planObj ? "Update" : "Submit"}</LoadingButton>
         </DialogActions>
         </>

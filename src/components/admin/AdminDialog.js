@@ -1,30 +1,39 @@
 import { db } from '@/config/firebase';
+import { useAppUserContext } from '@/context/AppUserContext';
 import { useAppError } from '@/context/ErrorContext';
 import { LoadingButton } from '@mui/lab';
 import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
-import { addDoc, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 
-export default function AdminDialog({ handleClose, updateUsers }) {
+export default function AdminDialog({ handleClose, updateUsers, userObj, setFocusedUser }) {
     const [isSubmitting, setSubmitting] = useState(false);
-    const {setMessage, setSeverity, setOpen} = useAppError();
-    const [user, setUser] = useState({
+    const { showMessage } = useAppError();
+
+    const {appUser} = useAppUserContext();
+
+    const [changed, setChanged] = useState(false);
+
+    const [user, setUser] = useState(!userObj ? {
         email: "",
         role: "",
         can_createuser: false,
         can_createplan: false,
         can_updateplan: false,
-        is_setupcompleted: false
-    });
+        is_setupcompleted: false,
+        created_at: "",
+        created_by: "",
+        updated_by: "",
+        updated_at: ""
+    }: userObj);
+
+    useEffect(() => {
+        if(JSON.stringify(userObj) !== JSON.stringify(user)) setChanged(true);
+        else setChanged(false);
+    },[userObj, user]);
 
     const submit = async () => {
         try {
-            if(user.email == "" || user.role == ""){
-                setMessage("Empty email or role !");
-                setSeverity("error");
-                setOpen(true);
-                return;
-            }
             setSubmitting(true);
             user.created_at = new Date().toISOString();
             const userRef = doc(db, "users", user.email);
@@ -32,22 +41,38 @@ export default function AdminDialog({ handleClose, updateUsers }) {
             setSubmitting(false);
             await updateUsers();
             handleClose();
+            
+            setFocusedUser(null);
 
-            setMessage("User created successfully !");
-            setSeverity("info");
-            setOpen(true);
+            showMessage("User created !", "info");
         } catch (error) {
-            setMessage(error.message);
-            setSeverity("error");
-            setOpen(true); 
+            showMessage(error.message, "error");
         }
         
         // db.collection("users").doc(user.email).set(user).then()
     }
 
-    // useEffect(() => {
-    //     console.log(user);
-    // },[user])
+    const update = async () => {
+        try {
+            setSubmitting(true);
+            user.updated_at = new Date().toISOString();
+            user.updated_by = appUser;
+
+            const docRef = doc(db, "users", user.email);
+            await updateDoc(docRef, user);
+
+            setSubmitting(false);
+            await updateUsers();
+            handleClose();
+
+            setFocusedUser(null);
+
+            showMessage("User updated !", "info");
+        } catch (error) {
+            showMessage(error.message, "error");
+        }
+    }
+
     return (
         <>
         <DialogTitle>Add new admin user</DialogTitle>
@@ -58,6 +83,8 @@ export default function AdminDialog({ handleClose, updateUsers }) {
                 <TextField
                     autoFocus
                     error={user.email == ""}
+                    value={user.email}
+                    disabled={userObj && true}
                     margin="dense"
                     id="name"
                     label="Email Address"
@@ -83,26 +110,26 @@ export default function AdminDialog({ handleClose, updateUsers }) {
                 </FormControl>
                 <FormControlLabel
                 value="can_createuser"
-                control={<Checkbox onChange={(event) => setUser(current => {return {...current, can_createuser: event.target.checked}}) }/>}
+                control={<Checkbox checked={user.can_createuser} onChange={(event) => setUser(current => {return {...current, can_createuser: event.target.checked}}) }/>}
                 label="Create user"
                 labelPlacement="start"
                 />
                 <FormControlLabel
                 value="can_createplan"
-                control={<Checkbox onChange={(event) => setUser(current => {return {...current, can_createplan: event.target.checked}}) }/>}
+                control={<Checkbox checked={user.can_createplan} onChange={(event) => setUser(current => {return {...current, can_createplan: event.target.checked}}) }/>}
                 label="Create plan"
                 labelPlacement="start"
                 />
                 <FormControlLabel
                 value="can_updateplan"
-                control={<Checkbox onChange={(event) => setUser(current => {return {...current, can_updateplan: event.target.checked}}) }/>}
+                control={<Checkbox checked={user.can_updateplan} onChange={(event) => setUser(current => {return {...current, can_updateplan: event.target.checked}}) }/>}
                 label="Update plan"
                 labelPlacement="start"
                 />
             </DialogContent>
             <DialogActions>
             <Button onClick={handleClose} variant='outlined'>Cancel</Button>
-            <LoadingButton loading={isSubmitting} variant='outlined' onClick={submit}>Submit</LoadingButton>
+            <LoadingButton disabled={!changed} loading={isSubmitting} variant='outlined' onClick={userObj ? update : submit}>{userObj ? "Update" : "Submit"}</LoadingButton>
             </DialogActions>
         </>
     )

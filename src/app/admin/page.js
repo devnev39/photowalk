@@ -5,7 +5,6 @@ import { UserAuth } from '@/config/AuthContext';
 import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAppError } from '@/context/ErrorContext';
-import { redirect } from 'next/navigation';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useDialogContext } from '@/context/DialogContext';
 import Users from '@/components/admin/Users';
@@ -36,12 +35,13 @@ const fetchDocsCollection = async (collection_name) => {
 
 export default function Page() {
     const [admin, setAdmin] = useState(null);
-    const { user } = UserAuth();
+    const { user, logout} = UserAuth();
     const {setOpen, setMessage, setSeverity} = useAppError();
     const [menu, setMenu] = useState([]);
     const [currentComponent, setCurrentComponent] = useState(null);
 
     const [focusedPlan, setFocusedPlan] = useState(null);
+    const [focusedUser, setFocusedUser] = useState(null);
 
     const [users, setUsers] = useState([]);
     const [plans, setPlans] = useState([]);
@@ -69,7 +69,7 @@ export default function Page() {
                     setMessage("User not found !");
                     setSeverity("error");
                     setOpen(true);
-                    redirect("/");
+                    logout();
                 }
             })    
         } catch (error) {
@@ -78,7 +78,7 @@ export default function Page() {
             setOpen(true);
         }
         
-    },[setMessage, setOpen, setSeverity, user]);
+    },[logout, setMessage, setOpen, setSeverity, user]);
 
     useEffect(() => {
         if(!admin) return;
@@ -171,7 +171,7 @@ export default function Page() {
                             <Box sx={{display: currentComponent == "Users" ? "block" : "none"}}>
                                 {/* Users block */}
                                 <Box sx={{display: "flex", justifyContent: "center"}}>
-                                    <Users users={users} updateUsers={updateUsers} />
+                                    <Users users={users} updateUsers={updateUsers} openUserEditDialog={() => handleClickOpen("adminDialog")} setFocusedUser={setFocusedUser} />
                                 </Box>
                                 <Box sx={{display: "flex", justifyContent: "center", my: 5}}>
                                     <Button variant='outlined' startIcon={<AdminPanelSettingsIcon />} onClick={() => handleClickOpen("adminDialog")}>
@@ -198,10 +198,10 @@ export default function Page() {
                 :null
             }
             <Dialog open={open && dialog == "adminDialog"} onClose={handleClose}>
-                <AdminDialog updateUsers={updateUsers} handleClose={handleClose} />
+                <AdminDialog setFocusedUser={setFocusedUser} userObj={focusedUser} updateUsers={updateUsers} handleClose={handleClose} />
             </Dialog>
             <Dialog open={open && dialog == "planDialog"} onClose={handleClose}>
-                <PlanDialog updatePlans={updatePlans} planObj={focusedPlan} handleClose={handleClose}/>
+                <PlanDialog updatePlans={updatePlans} planObj={focusedPlan} setFocusedPlan={setFocusedPlan} handleClose={handleClose}/>
             </Dialog>
             </>
         )
