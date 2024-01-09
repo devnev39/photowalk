@@ -43,7 +43,6 @@ function renderActionButton(props, updateUsers, errorProps) {
             errorProps.setSeverity("error");
             errorProps.setOpen(true); 
         }
-        
     }
     return (
         <IconButton onClick={deleteUser}>
@@ -55,7 +54,6 @@ function renderActionButton(props, updateUsers, errorProps) {
 export default function Users( {users, updateUsers} ) {
     const { user } = UserAuth();
     const [columns, setColumns] = useState([]);
-    const [usersState, setUsersState] = useState(users);
 
     const errorProps = useAppError();
 

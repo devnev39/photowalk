@@ -9,6 +9,7 @@ import { AuthContextProvider } from '@/config/AuthContext';
 import { ErrorContext } from '@/context/ErrorContext';
 import Error from '@/components/Error';
 import { DialogContext } from '@/context/DialogContext';
+import { AppUserContextProvider } from '@/context/AppUserContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,8 +21,13 @@ const inter = Inter({ subsets: ['latin'] })
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps.css' />
+        <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.2.0/SearchBox.css'/>
+      </head>
       <body>
         <AuthContextProvider>
+          <AppUserContextProvider>
           <DialogContext>
           <ErrorContext>
           <Nav />
@@ -33,6 +39,7 @@ export default function RootLayout({ children }) {
           <Footer />
           </ErrorContext>
           </DialogContext>
+          </AppUserContextProvider>
         </AuthContextProvider>
       </body>    
     </html>

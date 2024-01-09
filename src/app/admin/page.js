@@ -1,16 +1,19 @@
 'use client'
-import { Box, Button, Checkbox, Dialog, Grid, Toolbar, Typography } from '@mui/material'
+import { Box, Button, Dialog, Grid, Toolbar, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { UserAuth } from '@/config/AuthContext';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAppError } from '@/context/ErrorContext';
 import { redirect } from 'next/navigation';
-import { DataGrid } from '@mui/x-data-grid';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useDialogContext } from '@/context/DialogContext';
 import Users from '@/components/admin/Users';
 import AdminDialog from '@/components/admin/AdminDialog';
+import HikingIcon from '@mui/icons-material/Hiking';
+import PlanDialog from '@/components/admin/PlanDialog';
+import Plans from '@/components/admin/Plans';
+import { useAppUserContext } from '@/context/AppUserContext';
 
 const getUser = async (email) => {
     const ref = doc(db, "users", email);
@@ -21,12 +24,13 @@ const getUser = async (email) => {
     return false;
 }
 
-const fetchUsers = async () => {
-    const snapshot = await getDocs(collection(db, "users"));
+const fetchDocsCollection = async (collection_name) => {
+    const snapshot = await getDocs(collection(db, collection_name));
     let docs = [];
     snapshot.forEach(doc => {
         docs.push(doc.data());  
     })
+    console.log(docs);
     return docs;
 }
 
@@ -37,13 +41,21 @@ export default function Page() {
     const [menu, setMenu] = useState([]);
     const [currentComponent, setCurrentComponent] = useState(null);
 
+    const [focusedPlan, setFocusedPlan] = useState(null);
+
     const [users, setUsers] = useState([]);
     const [plans, setPlans] = useState([]);
 
-    const {open, handleClose, handleClickOpen} = useDialogContext();
+    const {open, handleClose, handleClickOpen, dialog} = useDialogContext();
+
+    const {setAppUser} = useAppUserContext();
 
     const updateUsers = async () => {
-        setUsers(await fetchUsers());
+        setUsers(await fetchDocsCollection("users"));
+    }
+
+    const updatePlans = async () => {
+        setPlans(await fetchDocsCollection("plans"));
     }
     
     useEffect(() => {
@@ -78,7 +90,8 @@ export default function Page() {
             m.push("Plans");
 
             // Fetch all the required data
-            fetchUsers().then(resp => setUsers(resp));
+            fetchDocsCollection("users").then(resp => setUsers(resp));
+            fetchDocsCollection("plans").then(resp => setPlans(resp));
 
             // set the menu
             setMenu(m);
@@ -87,14 +100,32 @@ export default function Page() {
             m.push("Plans");
 
             // Fetch all the required data
-            
+            fetchDocsCollection("plans").then(resp => setPlans(resp));
 
             // set the menu
             setMenu(m);
         }
     },[admin]);
 
-    useEffect(() => {console.log(menu)},[menu]);
+    useEffect(() => {
+        // This effect checks if user has completed the setup or not !
+        // Check the is_setupcompleted flag, if false then copy info required to db
+        if(!admin) return;
+        if(!admin.is_setupcompleted){
+            const updateUser = async () => {
+                const ref = doc(db, "users", admin.email);
+                await updateDoc(ref, {
+                    name: user.displayName,
+                    is_setupcompleted: true
+                });
+            }
+            updateUser();
+            setMessage("Updating user !");
+            setSeverity("info");
+            setOpen(true);
+        }
+        setAppUser(admin);
+    },[admin])
 
     return (
             <>
@@ -111,15 +142,29 @@ export default function Page() {
                 admin ? 
                 <Box sx={{display: "flex", flexGrow: 1, height: "85vh", width: "100%"}}>
                     <Grid container gap={1}>
-                        <Grid item xs={2} sx={{display: "flex", alignItems:"center", width: "100%", borderRight: "solid 1px", pr: "1%"}}>
+                        <Grid item xs={2} sx={{width: "100%", borderRight: "solid 1px", pr: "1%"}}>
+                            <Box sx={{display:"flex", justifyContent:"center", width: "100%"}}>
+                                <Box>
+                                    <Typography variant='h5'>
+                                        Welcome {admin.name} !
+                                    </Typography>
+                                    <Typography>
+                                        {admin.email}
+                                    </Typography>
+                                </Box>                                
+                            </Box>
+                            <Box sx={{display: "flex", alignItems: "center", height: "100%"}}>
                             <Box sx={{width: "100%"}}>
                             {
                                 menu.map(m => (
-                                    <Button key={m} onClick={() => setCurrentComponent(m)} variant={currentComponent == m ? "contained" : "outlined"} sx={{width: "100%", my: 1}}>
-                                        {m}
-                                    </Button>
+                                    
+                                        <Button key={m} onClick={() => setCurrentComponent(m)} variant={currentComponent == m ? "contained" : "outlined"} sx={{width: "100%", my: 1}}>
+                                            {m}
+                                        </Button>
+                                    
                                 ))
                             }
+                            </Box>
                             </Box>
                         </Grid>
                         <Grid item xs={8}>
@@ -129,19 +174,34 @@ export default function Page() {
                                     <Users users={users} updateUsers={updateUsers} />
                                 </Box>
                                 <Box sx={{display: "flex", justifyContent: "center", my: 5}}>
-                                    <Button variant='outlined' startIcon={<AdminPanelSettingsIcon />} onClick={handleClickOpen}>
+                                    <Button variant='outlined' startIcon={<AdminPanelSettingsIcon />} onClick={() => handleClickOpen("adminDialog")}>
                                         Add Admin User
                                     </Button>
                                 </Box>
                                 {/* Users block end*/}
+                            </Box>
+                            <Box sx={{display: currentComponent == "Plans" ? "block" : "none"}}>
+                                {/* Plans block */}
+                                <Box sx={{display: "flex", justifyContent: "center"}}>
+                                    <Plans setFocusedPlan={setFocusedPlan} openPlanEditDialog={() => handleClickOpen("planDialog")} plans={plans} setPlans={setPlans} />
+                                </Box>
+                                <Box sx={{display: "flex", justifyContent: "center", my: 5}}>
+                                    <Button variant='outlined' startIcon={<HikingIcon />} onClick={() => handleClickOpen("planDialog")}>
+                                        Add Plan
+                                    </Button>
+                                </Box>
+                                {/* Plans block end*/}
                             </Box>
                         </Grid>
                     </Grid>                    
                 </Box>
                 :null
             }
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open && dialog == "adminDialog"} onClose={handleClose}>
                 <AdminDialog updateUsers={updateUsers} handleClose={handleClose} />
+            </Dialog>
+            <Dialog open={open && dialog == "planDialog"} onClose={handleClose}>
+                <PlanDialog updatePlans={updatePlans} planObj={focusedPlan} handleClose={handleClose}/>
             </Dialog>
             </>
         )

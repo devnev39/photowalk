@@ -4,9 +4,11 @@ const DialogContextProvider = createContext();
 
 export const DialogContext = ({children}) => {
     const [open, setDialogOpen] = useState(false);
+    const [dialog, setDialog] = useState("");
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (dialog) => {
       setDialogOpen(true);
+      setDialog(dialog);
     };
   
     const handleClose = () => {
@@ -14,7 +16,7 @@ export const DialogContext = ({children}) => {
     };
 
     return (
-        <DialogContextProvider.Provider value={{open, handleClickOpen, handleClose}}>
+        <DialogContextProvider.Provider value={{open, handleClickOpen, handleClose, dialog}}>
             {children}
         </DialogContextProvider.Provider>
     )

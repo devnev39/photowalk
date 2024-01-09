@@ -56,6 +56,7 @@ export default function Nav() {
     try {
       if(user){
         await logout();
+        location.reload();
       }
       else {
         await googleSignIn();
