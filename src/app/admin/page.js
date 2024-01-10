@@ -157,11 +157,9 @@ export default function Page() {
                             <Box sx={{width: "100%"}}>
                             {
                                 menu.map(m => (
-                                    
-                                        <Button key={m} onClick={() => setCurrentComponent(m)} variant={currentComponent == m ? "contained" : "outlined"} sx={{width: "100%", my: 1}}>
-                                            {m}
-                                        </Button>
-                                    
+                                    <Button key={m} onClick={() => setCurrentComponent(m)} variant={currentComponent == m ? "contained" : "outlined"} sx={{width: "100%", my: 1}}>
+                                        {m}
+                                    </Button>
                                 ))
                             }
                             </Box>
@@ -186,7 +184,7 @@ export default function Page() {
                                     <Plans setFocusedPlan={setFocusedPlan} openPlanEditDialog={() => handleClickOpen("planDialog")} plans={plans} setPlans={setPlans} />
                                 </Box>
                                 <Box sx={{display: "flex", justifyContent: "center", my: 5}}>
-                                    <Button variant='outlined' startIcon={<HikingIcon />} onClick={() => handleClickOpen("planDialog")}>
+                                    <Button disabled={!admin.can_createplan} variant='outlined' startIcon={<HikingIcon />} onClick={() => handleClickOpen("planDialog")}>
                                         Add Plan
                                     </Button>
                                 </Box>

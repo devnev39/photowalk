@@ -1,0 +1,15 @@
+export const planSchema =  {
+    name: "",
+    description: "",
+    distance: 0,
+    tag: "",
+    path: [],
+    pois: [],
+    markers: [],
+    created_by: {},
+    updated_by: {},
+    updated_at: "",
+    created_at: "",
+    plan_datetime: "",
+    is_open: false,
+}

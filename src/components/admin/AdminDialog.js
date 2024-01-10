@@ -1,8 +1,9 @@
 import { db } from '@/config/firebase';
 import { useAppUserContext } from '@/context/AppUserContext';
 import { useAppError } from '@/context/ErrorContext';
+import { userSchema } from '@/models/User';
 import { LoadingButton } from '@mui/lab';
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Button, Checkbox, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 
@@ -17,18 +18,7 @@ export default function AdminDialog({ handleClose, updateUsers, userObj, setFocu
     let currentDate = new Date();
     currentDate.setMinutes(currentDate.getMinutes() - currentDate.getTimezoneOffset())
 
-    const [user, setUser] = useState(!userObj ? {
-        email: "",
-        role: "",
-        can_createuser: false,
-        can_createplan: false,
-        can_updateplan: false,
-        is_setupcompleted: false,
-        created_at: "",
-        created_by: "",
-        updated_by: "",
-        updated_at: ""
-    }: userObj);
+    const [user, setUser] = useState(!userObj ? userSchema : userObj);
 
     useEffect(() => {
         if(JSON.stringify(userObj) !== JSON.stringify(user)) setChanged(true);

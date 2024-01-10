@@ -11,6 +11,7 @@ import { Checkbox } from '@mui/material';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAppError } from '@/context/ErrorContext';
+import { useAppUserContext } from '@/context/AppUserContext';
 
 function RenderCheckBox(props) {
     return (
@@ -49,9 +50,9 @@ const getRowId = (row) => {
 export default function Plans({
     plans, setPlans, openPlanEditDialog, setFocusedPlan
 }) {
-    const [rowModesModel, setRowModesModel] = React.useState({});
-
     const {showMessage} = useAppError();
+
+    const {appUser} = useAppUserContext();
 
     useEffect(() => {
         console.log(plans);
@@ -121,6 +122,7 @@ export default function Plans({
                 label="Edit"
                 onClick={handleEditClick(id)}
                 color="inherit"
+                disabled={!appUser.can_updateplan}
                 />, 
                 <GridActionsCellItem
                     key={id + "1"}
@@ -128,6 +130,7 @@ export default function Plans({
                     label="Delete"
                     onClick={handleDeleteClick(id)}
                     color="inherit"
+                    disabled={appUser !== "superuser"}
                 />,
             ];
           },

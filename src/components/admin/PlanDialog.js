@@ -6,25 +6,12 @@ import { useAppError } from '@/context/ErrorContext';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAppUserContext } from '@/context/AppUserContext';
+import { planSchema } from '@/models/Plan';
 
 export default function PlanDialog({
     handleClose, updatePlans, planObj, setFocusedPlan
 }) {
-    const [plan, setPlan] = useState(!planObj ? {
-        name: "",
-        description: "",
-        distance: 0,
-        tag: "",
-        path: [],
-        pois: [],
-        markers: [],
-        created_by: {},
-        updated_by: {},
-        updated_at: "",
-        created_at: "",
-        plan_datetime: "",
-        is_open: false,
-    } : planObj);
+    const [plan, setPlan] = useState(!planObj ? planSchema : planObj);
 
     const [isSubmitting, setSubmitting] = useState(false);
 
