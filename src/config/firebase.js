@@ -11,15 +11,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_APPID,
   measurementId: process.env.NEXT_PUBLIC_MEASUREMENTID
 };
-// const firebaseConfig = {
-//   apiKey: "AIzaSyBVn9bKxu3pGCh26lNp-Xlrm3FaOUmLqJY",
-//   authDomain: "photowalk-dev.firebaseapp.com",
-//   projectId: "photowalk-dev",
-//   storageBucket: "photowalk-dev.appspot.com",
-//   messagingSenderId: "128426281749",
-//   appId: "1:128426281749:web:810b8f5d59b354da17b71c",
-//   measurementId: "G-M6MKKR25Z3"
-// };
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
