@@ -4,8 +4,8 @@ import { AppBar, Container, Toolbar, Typography, Link } from "@mui/material";
 
 const Footer = () => {
   return (
-    <Container>
-      <AppBar position="static" color="primary">
+    
+      <AppBar position="static" color="primary" sx={{mt:'auto'}}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <div>
             <Typography variant="body2" color='inherit'>
@@ -25,7 +25,7 @@ const Footer = () => {
           </div>
         </Toolbar>
       </AppBar>
-    </Container>
+   
   );
 }
 

@@ -144,21 +144,3 @@ nav .MuiDrawer-paper .MuiDivider-root {
   height: calc(var(--s)*var(--f));
 }
 
-
-.orange_gradient {
-  background-image: linear-gradient(to right, var(--mui-palette-amber-500), var(--mui-palette-orange-600), var(--mui-palette-yellow-500));
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.green_gradient {
-  background-image: linear-gradient(to right, var(--mui-palette-green-400), var(--mui-palette-green-500));
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.blue_gradient {
-  background-image: linear-gradient(to right, var(--mui-palette-blue-600), var(--mui-palette-cyan-600));
-  -webkit-background-clip: text;
-  color: transparent;
-}
