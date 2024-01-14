@@ -157,7 +157,7 @@ export default function Page() {
                                     <Plans setFocusedPlan={setFocusedPlan} openPlanEditDialog={() => handleClickOpen("planDialog")} plans={plans} setPlans={setPlans} />
                                 </Box>
                                 <Box sx={{display: "flex", justifyContent: "center", my: 5}}>
-                                    <Button disabled={!admin.can_createplan} variant='outlined' startIcon={<HikingIcon />} onClick={() => handleClickOpen("planDialog")}>
+                                    <Button disabled={!admin.can_createplan && admin.role != "superuser"} variant='outlined' startIcon={<HikingIcon />} onClick={() => handleClickOpen("planDialog")}>
                                         Add Plan
                                     </Button>
                                 </Box>

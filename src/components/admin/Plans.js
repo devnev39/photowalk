@@ -122,7 +122,7 @@ export default function Plans({
                 label="Edit"
                 onClick={handleEditClick(id)}
                 color="inherit"
-                disabled={!appUser.can_updateplan}
+                disabled={!appUser.can_updateplan && appUser.role != "superuser"}
                 />, 
                 <GridActionsCellItem
                     key={id + "1"}
@@ -130,7 +130,7 @@ export default function Plans({
                     label="Delete"
                     onClick={handleDeleteClick(id)}
                     color="inherit"
-                    disabled={appUser !== "superuser"}
+                    disabled={appUser.role !== "superuser"}
                 />,
             ];
           },
