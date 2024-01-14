@@ -2,8 +2,6 @@
 import { Box, Button, Dialog, Grid, Toolbar, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { UserAuth } from '@/config/AuthContext';
-import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
-import { db } from '@/config/firebase';
 import { useAppError } from '@/context/ErrorContext';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useDialogContext } from '@/context/DialogContext';
@@ -13,25 +11,7 @@ import HikingIcon from '@mui/icons-material/Hiking';
 import PlanDialog from '@/components/admin/PlanDialog';
 import Plans from '@/components/admin/Plans';
 import { useAppUserContext } from '@/context/AppUserContext';
-
-const getUser = async (email) => {
-    const ref = doc(db, "users", email);
-    const user = await getDoc(ref);
-    if(user.exists()){
-        return user.data();
-    }
-    return false;
-}
-
-const fetchDocsCollection = async (collection_name) => {
-    const snapshot = await getDocs(collection(db, collection_name));
-    let docs = [];
-    snapshot.forEach(doc => {
-        docs.push(doc.data());  
-    })
-    console.log(docs);
-    return docs;
-}
+import { fetchDocsCollection, getUser, updateUser } from '@/api/store';
 
 export default function Page() {
     const [admin, setAdmin] = useState(null);
@@ -112,14 +92,7 @@ export default function Page() {
         // Check the is_setupcompleted flag, if false then copy info required to db
         if(!admin) return;
         if(!admin.is_setupcompleted){
-            const updateUser = async () => {
-                const ref = doc(db, "users", admin.email);
-                await updateDoc(ref, {
-                    name: user.displayName,
-                    is_setupcompleted: true
-                });
-            }
-            updateUser();
+            updateUser({...admin, name: user.displayName, is_setupcompleted: true});
             setMessage("Updating user !");
             setSeverity("info");
             setOpen(true);
