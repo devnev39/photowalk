@@ -144,3 +144,55 @@ nav .MuiDrawer-paper .MuiDivider-root {
   height: calc(var(--s)*var(--f));
 }
 
+/* Flipping code */
+
+/* styles.css */
+.flip-card-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.flip-card {
+  perspective: 1000px;
+  margin: 10px;
+}
+
+.flip-card-inner {
+  width: 400px;
+  height: 220px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Roboto Mono';
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+}
+
+.flip-card-front {
+  transform: rotateY(0deg);
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  opacity: 0;
+}
+
+.flip-card:hover .flip-card-back {
+  opacity: 1;
+}
