@@ -10,7 +10,7 @@ import {
   ListItem,
 } from "@mui/material";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -35,7 +35,7 @@ const navItems = [
   {
     text: "About",
     link: "/about",
-  }
+  },
 ];
 
 const navStyle = {
@@ -46,7 +46,7 @@ const navStyle = {
 export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, googleSignIn, logout } = UserAuth();
-  const {setOpen, setMessage, setSeverity} = useAppError();
+  const { setOpen, setMessage, setSeverity } = useAppError();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -54,11 +54,10 @@ export default function Nav() {
 
   const handleAuth = async () => {
     try {
-      if(user){
+      if (user) {
         await logout();
         location.reload();
-      }
-      else {
+      } else {
         await googleSignIn();
       }
     } catch (error) {
@@ -66,10 +65,10 @@ export default function Nav() {
       setSeverity("error");
       setOpen(true);
     }
-  }
+  };
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
         PHOTOWALK
       </Typography>
@@ -77,13 +76,13 @@ export default function Nav() {
       <List>
         {navItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
+            <ListItemButton sx={{ textAlign: "center" }}>
               <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>
         ))}
         <ListItem disablePadding>
-          <ListItemButton sx={{ textAlign: 'center' }} onClick={handleAuth}>
+          <ListItemButton sx={{ textAlign: "center" }} onClick={handleAuth}>
             <ListItemText primary={user ? "Logout" : "Login"} />
           </ListItemButton>
         </ListItem>
@@ -127,11 +126,11 @@ export default function Nav() {
             <MenuIcon />
           </IconButton>
 
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
               <Button key={item.text}>{item.text}</Button>
             ))}
-           <Button onClick={handleAuth}>{user ? "Logout" : "Login"}</Button> 
+            <Button onClick={handleAuth}>{user ? "Logout" : "Login"}</Button>
           </Box>
         </Toolbar>
       </AppBar>
@@ -145,7 +144,10 @@ export default function Nav() {
           ModalProps={{
             keepMounted: true, // Better open performance on mobile.
           }}
-          sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box' } }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box" },
+          }}
         >
           {drawer}
         </Drawer>

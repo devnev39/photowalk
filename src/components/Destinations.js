@@ -1,4 +1,4 @@
-"use client";
+
 import { Card, CardActionArea, CardContent, CardMedia, Container, Grid, Typography } from "@mui/material";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
