@@ -1,9 +1,8 @@
 import { createContext, useContext, useState } from "react";
-const PropTypes = require("prop-types");
 
 const ErrorContextProvier = createContext();
 
-const ErrorContext = ({ children }) => {
+export const ErrorContext = ({ children }) => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("info");
   const [open, setOpen] = useState(false);
@@ -41,15 +40,6 @@ const ErrorContext = ({ children }) => {
   );
 };
 
-ErrorContext.propTypes = {
-  children: PropTypes.array,
-};
-
-const useAppError = () => {
+export const useAppError = () => {
   return useContext(ErrorContextProvier);
-};
-
-export default {
-  ErrorContext,
-  useAppError,
 };

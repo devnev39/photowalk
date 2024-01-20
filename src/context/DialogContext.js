@@ -1,8 +1,7 @@
-const PropTypes = require("prop-types");
 const { useContext, createContext, useState } = require("react");
 const DialogContextProvider = createContext();
 
-const DialogContext = ({ children }) => {
+export const DialogContext = ({ children }) => {
   const [open, setDialogOpen] = useState(false);
   const [dialog, setDialog] = useState("");
 
@@ -24,15 +23,6 @@ const DialogContext = ({ children }) => {
   );
 };
 
-DialogContext.propTypes = {
-  children: PropTypes.array,
-};
-
-const useDialogContext = () => {
+export const useDialogContext = () => {
   return useContext(DialogContextProvider);
-};
-
-export default {
-  DialogContext,
-  useDialogContext,
 };
