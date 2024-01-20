@@ -1,17 +1,27 @@
 const { createContext, useState, useContext } = require("react");
+const PropTypes = require("prop-types");
 
 const AppUserContext = createContext();
 
-export const AppUserContextProvider = ({children}) => {
-    const [appUser, setAppUser] = useState(null);
+const AppUserContextProvider = ({ children }) => {
+  const [appUser, setAppUser] = useState(null);
 
-    return (
-        <AppUserContext.Provider value={{appUser, setAppUser}}>
-            {children}
-        </AppUserContext.Provider>
-    )
-}
+  return (
+    <AppUserContext.Provider value={{ appUser, setAppUser }}>
+      {children}
+    </AppUserContext.Provider>
+  );
+};
 
-export const useAppUserContext = () => {
-    return useContext(AppUserContext);
-}
+const useAppUserContext = () => {
+  return useContext(AppUserContext);
+};
+
+AppUserContextProvider.propTypes = {
+  children: PropTypes.array,
+};
+
+export default {
+  AppUserContextProvider,
+  useAppUserContext,
+};
