@@ -1,10 +1,12 @@
 "use client";
-import { Grid, Typography } from "@mui/material";
+
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import "../app/gallerystyles.css";
 
 const GallerySection = () => {
   return (
-    <Grid container spacing={1} sx={{ textAlign: "center", mt: 8, mb: 5 }}>
+    <Container sx={{ mt: 8, textAlign: "center" }}>
+    <Grid container spacing={1} sx={{ textAlign: 'center', mt: 8, mb: 5 }}>
       <Grid item xs={12}>
         <Typography
           variant="h2"
@@ -20,6 +22,7 @@ const GallerySection = () => {
         </Typography>
       </Grid>
 
+      <Grid item lg className="container" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex', flexWrap: 'wrap'}}>
       <Grid item lg className="container" sx={{ mx: 10, mt: 5 }}>
         <img className="gallery-image" src="/download.jpg" alt="Image 1" />
         <img className="gallery-image" src="/download.jpg" alt="Image 2" />
@@ -36,6 +39,7 @@ const GallerySection = () => {
         <img className="gallery-image" src="/download.jpg" alt="Image 3" />
       </Grid>
     </Grid>
+    </Container>
   );
 };
 
