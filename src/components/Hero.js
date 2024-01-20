@@ -1,4 +1,4 @@
-import { Typography, Grid, Button, Box } from "@mui/material";
+import { Typography, Grid, Button } from "@mui/material";
 import "../app/cardstyles.css";
 
 const Hero = () => {
@@ -14,13 +14,13 @@ const Hero = () => {
         <Button
           sx={{ mt: 5 }}
           style={{
-            backgroundColor: "#4CAF50", 
-            color: "white", 
-            padding: "10px 20px", 
-            borderRadius: "5px", 
-            fontSize: "16px", 
-            cursor: "pointer", 
-            transition: "background-color 0.3s", 
+            backgroundColor: "#4CAF50",
+            color: "white",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontSize: "16px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
           }}
         >
           Join Us
