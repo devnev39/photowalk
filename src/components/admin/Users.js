@@ -14,7 +14,6 @@ const getUserRowId = (row) => {
 function RenderCheckBox(props) {
   const [checked, setChecked] = useState(props.value); // Initiated react binded value with param from `rows`
 
-  // Handler for user clicks to set checkbox mark or unset it
   const handleChange = (event) => {
     setChecked(event.target.checked);
   };
