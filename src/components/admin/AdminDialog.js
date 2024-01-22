@@ -175,6 +175,21 @@ export default function AdminDialog({
           label="Update plan"
           labelPlacement="start"
         />
+        <FormControlLabel
+          value="can_uploadimage"
+          control={
+            <Checkbox
+              checked={user.can_uploadimage}
+              onChange={(event) =>
+                setUser((current) => {
+                  return { ...current, can_uploadimage: event.target.checked };
+                })
+              }
+            />
+          }
+          label="Upload image"
+          labelPlacement="start"
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} variant="outlined">
