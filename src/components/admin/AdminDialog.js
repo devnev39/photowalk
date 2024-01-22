@@ -60,9 +60,8 @@ export default function AdminDialog({
       showMessage("User created !", "info");
     } catch (error) {
       showMessage(error.message, "error");
+      setSubmitting(false);
     }
-
-    // db.collection("users").doc(user.email).set(user).then()
   };
 
   const update = async () => {
