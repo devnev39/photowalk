@@ -9,6 +9,7 @@ import { ErrorContext } from "@/context/ErrorContext";
 import Error from "@/components/Error";
 import { DialogContext } from "@/context/DialogContext";
 import { AppUserContextProvider } from "@/context/AppUserContext";
+import { ConfirmDialogContextProvider } from "@/context/ConfirmDialog";
 
 export default function RootLayout({ children }) {
   return (
@@ -29,15 +30,17 @@ export default function RootLayout({ children }) {
         <AuthContextProvider>
           <AppUserContextProvider>
             <DialogContext>
-              <ErrorContext>
-                <Nav />
-                <div className="main">
-                  <div className="gradient" />
-                </div>
-                <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
-                <Error />
-                <Footer />
-              </ErrorContext>
+              <ConfirmDialogContextProvider>
+                <ErrorContext>
+                  <Nav />
+                  <div className="main">
+                    <div className="gradient" />
+                  </div>
+                  <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+                  <Error />
+                  <Footer />
+                </ErrorContext>
+              </ConfirmDialogContextProvider>
             </DialogContext>
           </AppUserContextProvider>
         </AuthContextProvider>

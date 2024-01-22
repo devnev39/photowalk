@@ -5,13 +5,13 @@ import {
   GridActionsCellItem,
   useGridApiContext,
 } from "@mui/x-data-grid";
-
-import { useEffect } from "react";
 import { Checkbox } from "@mui/material";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { useAppError } from "@/context/ErrorContext";
 import { useAppUserContext } from "@/context/AppUserContext";
+import { useConfirmDialogContext } from "@/context/ConfirmDialog";
+import { useEffect, useState } from "react";
 
 function RenderCheckBox(props) {
   return (
@@ -47,9 +47,9 @@ export default function Plans({
 
   const { appUser } = useAppUserContext();
 
-  useEffect(() => {
-    console.log(plans);
-  }, [plans]);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const ConfirmDialogProps = useConfirmDialogContext();
 
   const columns = [
     {
@@ -136,15 +136,31 @@ export default function Plans({
     openPlanEditDialog();
   };
 
+  const deleteDocFirebase = async (id) => {
+    await deleteDoc(doc(db, "plans", id));
+    setPlans(plans.filter((row) => row.name !== id));
+    showMessage("Plan deleted !", "info");
+  };
+
   const handleDeleteClick = (id) => async () => {
     try {
-      await deleteDoc(doc(db, "plans", id));
-      setPlans(plans.filter((row) => row.name !== id));
-      showMessage("Plan deleted !", "info");
+      setDeleteId(id);
+      ConfirmDialogProps.setDialogTitle(`Delete plan ?`);
+      ConfirmDialogProps.setDialogContent(
+        `Confirm to delete the plan named : ${id}`,
+      );
+      ConfirmDialogProps.handleClickOpen();
     } catch (error) {
       showMessage(error.message, "error");
+      setDeleteId(null);
     }
   };
+
+  useEffect(() => {
+    if (ConfirmDialogProps.confirm) {
+      deleteDocFirebase(deleteId);
+    }
+  }, [ConfirmDialogProps.confirm]);
 
   return (
     <DataGrid
