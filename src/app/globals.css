@@ -1,3 +1,12 @@
+@keyframes myfirst {
+  0% {
+    left: -25%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
 :root {
   --mui-palette-primary-main: #2196f3;
   --mui-palette-secondary-main: #ff9800;
