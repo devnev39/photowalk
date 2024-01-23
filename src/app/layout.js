@@ -2,7 +2,6 @@
 
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import Nav from "../components/Nav";
-import Footer from "@/components/Footer";
 import "./globals.css";
 import { AuthContextProvider } from "@/config/AuthContext";
 import { ErrorContext } from "@/context/ErrorContext";
@@ -36,7 +35,6 @@ export default function RootLayout({ children }) {
                 </div>
                 <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
                 <Error />
-                <Footer />
               </ErrorContext>
             </DialogContext>
           </AppUserContextProvider>
