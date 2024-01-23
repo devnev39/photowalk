@@ -8,7 +8,6 @@ import { ErrorContext } from "@/context/ErrorContext";
 import Error from "@/components/Error";
 import { DialogContext } from "@/context/DialogContext";
 import { AppUserContextProvider } from "@/context/AppUserContext";
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

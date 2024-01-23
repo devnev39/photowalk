@@ -5,6 +5,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { useAppError } from "@/context/ErrorContext";
+import { useConfirmDialogContext } from "@/context/ConfirmDialog";
 const { Checkbox } = require("@mui/material");
 
 const getUserRowId = (row) => {
@@ -36,10 +37,8 @@ export default function Users({
   setFocusedUser,
 }) {
   const { showMessage } = useAppError();
-
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
+  const ConfirmDialog = useConfirmDialogContext();
+  const [deleteId, setDeleteId] = useState(null);
 
   const userColumns = [
     {
@@ -104,23 +103,39 @@ export default function Users({
     },
   ];
 
+  const deleteFirebaseDoc = async (props) => {
+    await deleteDoc(doc(db, "users", props.row.email));
+    await updateUsers();
+    showMessage("User deleted !", "info");
+    setDeleteId(null);
+  };
+
   const handleDeleteClick = (props) => async () => {
     try {
-      await deleteDoc(doc(db, "users", props.row.email));
-      await updateUsers();
-      showMessage("User deleted !", "info");
+      setDeleteId(props);
+      ConfirmDialog.setCurrent("Users");
+      ConfirmDialog.setDialogTitle(`Delete user ?`);
+      ConfirmDialog.setDialogContent(
+        `Confirm to delete user: ${props.row.email}`,
+      );
+      ConfirmDialog.handleClickOpen();
     } catch (error) {
       showMessage(error.message, "error");
+      setDeleteId(null);
     }
   };
 
   const handleEditClick = (props) => async () => {
     setFocusedUser(users.filter((u) => u.email === props.row.email)[0]);
-    console.log(props.row.email);
-    console.log(users);
     console.log(users.filter((u) => u.email === props.row.email)[0]);
     openUserEditDialog();
   };
+
+  useEffect(() => {
+    if (ConfirmDialog.confirm && ConfirmDialog.current === "Users") {
+      deleteFirebaseDoc(deleteId);
+    }
+  }, [ConfirmDialog.confirm]);
 
   return (
     <DataGrid

@@ -1,5 +1,16 @@
 "use client";
-import { Box, Button, Dialog, Grid, Toolbar, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { UserAuth } from "@/config/AuthContext";
 import { useAppError } from "@/context/ErrorContext";
@@ -9,9 +20,13 @@ import Users from "@/components/admin/Users";
 import AdminDialog from "@/components/admin/AdminDialog";
 import HikingIcon from "@mui/icons-material/Hiking";
 import PlanDialog from "@/components/admin/PlanDialog";
+import ImageDialog from "@/components/admin/ImageDialog";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import Plans from "@/components/admin/Plans";
 import { useAppUserContext } from "@/context/AppUserContext";
 import { fetchDocsCollection, getUser, updateUser } from "@/api/store";
+import { useConfirmDialogContext } from "@/context/ConfirmDialog";
+import Images from "@/components/admin/Images";
 
 export default function Page() {
   const [admin, setAdmin] = useState(null);
@@ -22,11 +37,15 @@ export default function Page() {
 
   const [focusedPlan, setFocusedPlan] = useState(null);
   const [focusedUser, setFocusedUser] = useState(null);
+  const [focusedImage, setFocusedImage] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [plans, setPlans] = useState([]);
+  const [images, setImages] = useState([]);
 
   const { open, handleClose, handleClickOpen, dialog } = useDialogContext();
+
+  const ConfirmDialogProps = useConfirmDialogContext();
 
   const { setAppUser } = useAppUserContext();
 
@@ -36,6 +55,10 @@ export default function Page() {
 
   const updatePlans = async () => {
     setPlans(await fetchDocsCollection("plans"));
+  };
+
+  const updateImages = async () => {
+    setImages(await fetchDocsCollection("images"));
   };
 
   useEffect(() => {
@@ -67,20 +90,24 @@ export default function Page() {
       // Add all the pages required
       m.push("Users");
       m.push("Plans");
+      m.push("Images");
 
       // Fetch all the required data
       fetchDocsCollection("users").then((resp) => setUsers(resp));
       fetchDocsCollection("plans").then((resp) => setPlans(resp));
+      fetchDocsCollection("images").then((resp) => setImages(resp));
 
       // set the menu
       setMenu(m);
     } else {
       // Back checks on other users
       m.push("Plans");
+      if (admin.can_uploadimage) m.push("Images");
 
       // Fetch all the required data
       fetchDocsCollection("plans").then((resp) => setPlans(resp));
-
+      if (admin.can_uploadimage)
+        fetchDocsCollection("images").then((resp) => setImages(resp));
       // set the menu
       setMenu(m);
     }
@@ -211,6 +238,31 @@ export default function Page() {
                 </Box>
                 {/* Plans block end */}
               </Box>
+              <Box
+                sx={{
+                  display: currentComponent === "Images" ? "block" : "none",
+                }}
+              >
+                {/* Images block */}
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Images
+                    images={images}
+                    setFocusedImage={setFocusedImage}
+                    setImages={setImages}
+                    openImageEditDialog={() => handleClickOpen("imageDialog")}
+                  />
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", my: 5 }}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<AddPhotoAlternateIcon />}
+                    onClick={() => handleClickOpen("imageDialog")}
+                  >
+                    Add new image
+                  </Button>
+                </Box>
+                {/* Images block end */}
+              </Box>
             </Grid>
           </Grid>
         </Box>
@@ -230,6 +282,38 @@ export default function Page() {
           setFocusedPlan={setFocusedPlan}
           handleClose={handleClose}
         />
+      </Dialog>
+      <Dialog open={open && dialog === "imageDialog"} onClose={handleClose}>
+        <ImageDialog
+          updateImages={updateImages}
+          imageObj={focusedImage}
+          setFocusedImage={setFocusedImage}
+          handleClose={handleClose}
+        />
+      </Dialog>
+      <Dialog
+        keepMounted
+        open={ConfirmDialogProps.open}
+        onClose={ConfirmDialogProps.handleClose}
+      >
+        <DialogTitle>{ConfirmDialogProps.dialogTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {ConfirmDialogProps.dialogContent}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={ConfirmDialogProps.handleClose} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={ConfirmDialogProps.Confirm}
+            variant="outlined"
+            color="error"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );
