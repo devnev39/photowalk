@@ -113,6 +113,7 @@ export default function Users({
   const handleDeleteClick = (props) => async () => {
     try {
       setDeleteId(props);
+      ConfirmDialog.setCurrent("Users");
       ConfirmDialog.setDialogTitle(`Delete user ?`);
       ConfirmDialog.setDialogContent(
         `Confirm to delete user: ${props.row.email}`,
@@ -126,14 +127,12 @@ export default function Users({
 
   const handleEditClick = (props) => async () => {
     setFocusedUser(users.filter((u) => u.email === props.row.email)[0]);
-    console.log(props.row.email);
-    console.log(users);
     console.log(users.filter((u) => u.email === props.row.email)[0]);
     openUserEditDialog();
   };
 
   useEffect(() => {
-    if (ConfirmDialog.confirm) {
+    if (ConfirmDialog.confirm && ConfirmDialog.current === "Users") {
       deleteFirebaseDoc(deleteId);
     }
   }, [ConfirmDialog.confirm]);

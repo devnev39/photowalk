@@ -145,6 +145,7 @@ export default function Plans({
   const handleDeleteClick = (id) => async () => {
     try {
       setDeleteId(id);
+      ConfirmDialogProps.setCurrent("Plans");
       ConfirmDialogProps.setDialogTitle(`Delete plan ?`);
       ConfirmDialogProps.setDialogContent(
         `Confirm to delete the plan named : ${id}`,
@@ -157,7 +158,7 @@ export default function Plans({
   };
 
   useEffect(() => {
-    if (ConfirmDialogProps.confirm) {
+    if (ConfirmDialogProps.confirm && ConfirmDialogProps.current === "Plans") {
       deleteDocFirebase(deleteId);
     }
   }, [ConfirmDialogProps.confirm]);
