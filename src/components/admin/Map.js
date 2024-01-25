@@ -2,9 +2,9 @@
 /* eslint-disable camelcase */
 import { useAppError } from "@/context/ErrorContext";
 import { Box } from "@mui/material";
-import tt from "@tomtom-international/web-sdk-maps";
-import tt_s from "@tomtom-international/web-sdk-services";
-import SearchBox from "@tomtom-international/web-sdk-plugin-searchbox";
+// import tt from "@tomtom-international/web-sdk-maps";
+// import tt_s from "@tomtom-international/web-sdk-services";
+// import SearchBox from "@tomtom-international/web-sdk-plugin-searchbox";
 import "@tomtom-international/web-sdk-plugin-searchbox/dist/SearchBox.css";
 
 import { useEffect, useRef, useState } from "react";
@@ -45,87 +45,104 @@ export default function Map({ plan, setPlan }) {
   }, [setMessage, setOpen, setSeverity]);
 
   useEffect(() => {
-    const m = tt.map({
-      key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-      container: mapRef.current,
-      center: [mapLng, mapLat],
-      zoom: mapZoom,
-    });
-    const searchBox = new SearchBox(tt_s.services, {
-      searchOptions: {
-        key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-        language: "en-GB",
-      },
-      autocompleteOptions: {
-        key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-        language: "en-GB",
-      },
-      units: "kilometers",
-    });
-    searchBox.on("tomtom.searchbox.resultselected", (result) => {
-      setMapLng(result.data.result.position.lng);
-      setMapLat(result.data.result.position.lat);
-    });
-    m.addControl(searchBox, "top-left");
-    setMap(m);
-    console.log("set map !");
-    return () => m.remove();
-  }, [mapLng, mapLat, mapZoom]);
-
-  useEffect(() => {
-    if (!map.on) return;
     let markers = [];
-    map.on("click", (event) => {
-      const marker = new tt.Marker()
-        .setLngLat(event.lngLat)
-        .setDraggable(true)
-        .addTo(map);
-      const lngLat = { lng: event.lngLat.lng, lat: event.lngLat.lat };
-      marker.on("dragstart", (marker_event) => {
-        console.log("Clicked on marker !");
-        marker.remove();
-        markers = markers.filter((m) => m !== marker);
+    const initTT = async () => {
+      const tt = await import("@tomtom-international/web-sdk-maps");
+      const tt_s = await import("@tomtom-international/web-sdk-services");
+      const SearchBox = await import(
+        "@tomtom-international/web-sdk-plugin-searchbox"
+      );
+      console.log(SearchBox);
+      console.log(SearchBox.SearchBox);
+      const m = tt.map({
+        key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+        container: mapRef.current,
+        center: [mapLng, mapLat],
+        zoom: mapZoom,
+      });
+
+      const searchBox = new SearchBox.SearchBox(tt_s.services, {
+        searchOptions: {
+          key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+          language: "en-GB",
+        },
+        autocompleteOptions: {
+          key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+          language: "en-GB",
+        },
+        units: "kilometers",
+      });
+      searchBox.on("tomtom.searchbox.resultselected", (result) => {
+        setMapLng(result.data.result.position.lng);
+        setMapLat(result.data.result.position.lat);
+      });
+      m.addControl(searchBox, "top-left");
+      setMap(m);
+
+      console.log("set map !");
+
+      if (!map.on) return;
+      // let markers = [];
+      map.on("click", (event) => {
+        const marker = new tt.Marker()
+          .setLngLat(event.lngLat)
+          .setDraggable(true)
+          .addTo(map);
+        const lngLat = { lng: event.lngLat.lng, lat: event.lngLat.lat };
+        marker.on("dragstart", (marker_event) => {
+          console.log("Clicked on marker !");
+          marker.remove();
+          markers = markers.filter((m) => m !== marker);
+          setPlan((current) => {
+            return {
+              ...current,
+              markers: current.markers.filter(
+                (m) => JSON.stringify(m) !== JSON.stringify(lngLat),
+              ),
+            };
+          });
+        });
         setPlan((current) => {
-          return {
-            ...current,
-            markers: current.markers.filter(
-              (m) => JSON.stringify(m) !== JSON.stringify(lngLat),
-            ),
-          };
+          return { ...current, markers: [...current.markers, lngLat] };
+        });
+        markers.push(marker);
+      });
+
+      if (!plan) return;
+
+      plan.markers.forEach((marker) => {
+        const mkr = new tt.Marker()
+          .setLngLat([marker.lng, marker.lat])
+          .setDraggable(true)
+          .addTo(map);
+        markers.push(mkr);
+        mkr.on("dragstart", (marker_event) => {
+          console.log("Clicked on marker !");
+          mkr.remove();
+          markers = markers.filter((m) => m !== mkr);
+          setPlan((current) => {
+            return {
+              ...current,
+              markers: current.markers.filter(
+                (m) => JSON.stringify(m) !== JSON.stringify(marker),
+              ),
+            };
+          });
         });
       });
-      setPlan((current) => {
-        return { ...current, markers: [...current.markers, lngLat] };
-      });
-      markers.push(marker);
-    });
-    if (!plan) return;
+    };
 
-    plan.markers.forEach((marker) => {
-      const mkr = new tt.Marker()
-        .setLngLat([marker.lng, marker.lat])
-        .setDraggable(true)
-        .addTo(map);
-      markers.push(mkr);
-      mkr.on("dragstart", (marker_event) => {
-        console.log("Clicked on marker !");
-        mkr.remove();
-        markers = markers.filter((m) => m !== mkr);
-        setPlan((current) => {
-          return {
-            ...current,
-            markers: current.markers.filter(
-              (m) => JSON.stringify(m) !== JSON.stringify(marker),
-            ),
-          };
-        });
-      });
-    });
-
+    initTT();
+    // return () =>
     return () => {
       markers.forEach((m) => m.remove());
+      if (map && map.remove) map.remove();
     };
-  }, [map, plan, setPlan]);
+  }, [mapLng, mapLat, mapZoom, plan, setPlan]);
+
+  // useEffect(() => {
+
+  // }, [map, plan, setPlan]);
 
   return (
     // Important! Always set the container height explicitly
