@@ -66,7 +66,6 @@ export default function Page() {
     try {
       getUser(user.email).then((u) => {
         if (u) {
-          console.log(u);
           setAdmin(u);
         } else {
           setMessage("User not found ! Logging out !");
@@ -85,7 +84,6 @@ export default function Page() {
   useEffect(() => {
     if (!admin) return;
     const m = [];
-    console.log(admin);
     if (admin.role === "superuser") {
       // Add all the pages required
       m.push("Users");

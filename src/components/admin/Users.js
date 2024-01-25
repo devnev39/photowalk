@@ -127,7 +127,6 @@ export default function Users({
 
   const handleEditClick = (props) => async () => {
     setFocusedUser(users.filter((u) => u.email === props.row.email)[0]);
-    console.log(users.filter((u) => u.email === props.row.email)[0]);
     openUserEditDialog();
   };
 

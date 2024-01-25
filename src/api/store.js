@@ -22,7 +22,6 @@ export const fetchDocsCollection = async (collectionName) => {
   snapshot.forEach((doc) => {
     docs.push(doc.data());
   });
-  console.log(docs);
   return docs;
 };
 

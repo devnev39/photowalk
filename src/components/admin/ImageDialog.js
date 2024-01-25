@@ -61,7 +61,6 @@ export default function ImageDialog({
   useEffect(() => {
     if (JSON.stringify(image) !== JSON.stringify(imageObj)) setChanged(true);
     else setChanged(false);
-    console.log(imageObj);
   }, [imageObj, image]);
 
   const update = async () => {
@@ -230,8 +229,6 @@ export default function ImageDialog({
                       if (event.target.files.length) {
                         setFile(event.target.files[0]);
                       }
-                      console.log("File uploaded");
-                      console.log(event.target.files);
                     }}
                   />
                 </Button>

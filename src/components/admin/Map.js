@@ -80,7 +80,6 @@ export default function Map({ plan, setPlan }) {
           .addTo(m);
         const lngLat = { lng: event.lngLat.lng, lat: event.lngLat.lat };
         marker.on("dragstart", (marker_event) => {
-          console.log("Clicked on marker !");
           marker.remove();
           markers = markers.filter((m) => m !== marker);
           setPlan((current) => {
@@ -92,8 +91,6 @@ export default function Map({ plan, setPlan }) {
             };
           });
         });
-        console.log("Map clicked !");
-        console.log(markers);
         setPlan((current) => {
           return { ...current, markers: [...current.markers, lngLat] };
         });
@@ -106,9 +103,7 @@ export default function Map({ plan, setPlan }) {
           .setLngLat([marker.lng, marker.lat])
           .setDraggable(true)
           .addTo(m);
-        console.log("Drawing markers from plan");
         mkr.on("dragstart", (marker_event) => {
-          console.log("Clicked on marker !");
           mkr.remove();
           markers = markers.filter((m) => m !== mkr);
           setPlan((current) => {
