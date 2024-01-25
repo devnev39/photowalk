@@ -2,9 +2,6 @@
 /* eslint-disable camelcase */
 import { useAppError } from "@/context/ErrorContext";
 import { Box } from "@mui/material";
-// import tt from "@tomtom-international/web-sdk-maps";
-// import tt_s from "@tomtom-international/web-sdk-services";
-// import SearchBox from "@tomtom-international/web-sdk-plugin-searchbox";
 import "@tomtom-international/web-sdk-plugin-searchbox/dist/SearchBox.css";
 
 import { useEffect, useRef, useState } from "react";
@@ -48,12 +45,10 @@ export default function Map({ plan, setPlan }) {
     let markers = [];
     const initTT = async () => {
       const tt = await import("@tomtom-international/web-sdk-maps");
-      // const tt_s = await import("@tomtom-international/web-sdk-services");
-      const SearchBox = await import(
+      const tt_s = await import("@tomtom-international/web-sdk-services");
+      const { default: SearchBoxPlugin } = await import(
         "@tomtom-international/web-sdk-plugin-searchbox"
       );
-      console.log(SearchBox);
-      console.log(SearchBox.SearchBox);
       const m = tt.map({
         key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
         container: mapRef.current,
@@ -61,28 +56,23 @@ export default function Map({ plan, setPlan }) {
         zoom: mapZoom,
       });
 
-      // const searchBox = new tt.plugins.SearchBox(tt_s.services, {
-      //   searchOptions: {
-      //     key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-      //     language: "en-GB",
-      //   },
-      //   autocompleteOptions: {
-      //     key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-      //     language: "en-GB",
-      //   },
-      //   units: "kilometers",
-      // });
+      const searchBox = new SearchBoxPlugin(tt_s.services, {
+        searchOptions: {
+          key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+          language: "en-GB",
+        },
+        autocompleteOptions: {
+          key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+          language: "en-GB",
+        },
+        units: "kilometers",
+      });
 
-      // searchBox.on("tomtom.searchbox.resultselected", (result) => {
-      //   setMapLng(result.data.result.position.lng);
-      //   setMapLat(result.data.result.position.lat);
-      // });
-      // m.addControl(searchBox, "top-left");
-
-      console.log("set map !");
-
-      // if (!map.on) return;
-      // let markers = [];
+      searchBox.on("tomtom.searchbox.resultselected", (result) => {
+        setMapLng(result.data.result.position.lng);
+        setMapLat(result.data.result.position.lat);
+      });
+      m.addControl(searchBox, "top-left");
       m.on("click", (event) => {
         const marker = new tt.Marker()
           .setLngLat(event.lngLat)
@@ -111,7 +101,6 @@ export default function Map({ plan, setPlan }) {
       });
 
       if (!plan) return;
-
       plan.markers.forEach((marker) => {
         const mkr = new tt.Marker()
           .setLngLat([marker.lng, marker.lat])
@@ -137,31 +126,11 @@ export default function Map({ plan, setPlan }) {
     };
 
     initTT();
-    // return () =>
     return () => {
       markers.forEach((m) => m.remove());
       if (map && map.remove) map.remove();
     };
   }, [mapLng, mapLat, mapZoom]);
 
-  // useEffect(() => {
-
-  // }, [map, plan, setPlan]);
-
-  return (
-    // Important! Always set the container height explicitly
-    // <>
-    //     <TextField label={"Search"}
-    //     onChange={(event) => setQuery(event.target.value)}
-    //     onKeyUp={(key) => {
-    //         if(key.key == "Enter" || key.key == 13){
-    //             makeSearch();
-    //         }
-    //     }}
-    //     />
-    // <div>
-    <Box sx={{ height: "50vh" }} id="mapDiv" ref={mapRef}></Box>
-    // </div>
-    // </>
-  );
+  return <Box sx={{ height: "50vh" }} id="mapDiv" ref={mapRef}></Box>;
 }
