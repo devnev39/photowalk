@@ -48,7 +48,7 @@ export default function Map({ plan, setPlan }) {
     let markers = [];
     const initTT = async () => {
       const tt = await import("@tomtom-international/web-sdk-maps");
-      const tt_s = await import("@tomtom-international/web-sdk-services");
+      // const tt_s = await import("@tomtom-international/web-sdk-services");
       const SearchBox = await import(
         "@tomtom-international/web-sdk-plugin-searchbox"
       );
@@ -61,33 +61,33 @@ export default function Map({ plan, setPlan }) {
         zoom: mapZoom,
       });
 
-      const searchBox = new SearchBox.SearchBox(tt_s.services, {
-        searchOptions: {
-          key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-          language: "en-GB",
-        },
-        autocompleteOptions: {
-          key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
-          language: "en-GB",
-        },
-        units: "kilometers",
-      });
-      searchBox.on("tomtom.searchbox.resultselected", (result) => {
-        setMapLng(result.data.result.position.lng);
-        setMapLat(result.data.result.position.lat);
-      });
-      m.addControl(searchBox, "top-left");
-      setMap(m);
+      // const searchBox = new tt.plugins.SearchBox(tt_s.services, {
+      //   searchOptions: {
+      //     key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+      //     language: "en-GB",
+      //   },
+      //   autocompleteOptions: {
+      //     key: "PU1iOYOvXi4jz47NHESb32KFfRreuQ7I",
+      //     language: "en-GB",
+      //   },
+      //   units: "kilometers",
+      // });
+
+      // searchBox.on("tomtom.searchbox.resultselected", (result) => {
+      //   setMapLng(result.data.result.position.lng);
+      //   setMapLat(result.data.result.position.lat);
+      // });
+      // m.addControl(searchBox, "top-left");
 
       console.log("set map !");
 
-      if (!map.on) return;
+      // if (!map.on) return;
       // let markers = [];
-      map.on("click", (event) => {
+      m.on("click", (event) => {
         const marker = new tt.Marker()
           .setLngLat(event.lngLat)
           .setDraggable(true)
-          .addTo(map);
+          .addTo(m);
         const lngLat = { lng: event.lngLat.lng, lat: event.lngLat.lat };
         marker.on("dragstart", (marker_event) => {
           console.log("Clicked on marker !");
@@ -102,6 +102,8 @@ export default function Map({ plan, setPlan }) {
             };
           });
         });
+        console.log("Map clicked !");
+        console.log(markers);
         setPlan((current) => {
           return { ...current, markers: [...current.markers, lngLat] };
         });
@@ -114,8 +116,8 @@ export default function Map({ plan, setPlan }) {
         const mkr = new tt.Marker()
           .setLngLat([marker.lng, marker.lat])
           .setDraggable(true)
-          .addTo(map);
-        markers.push(mkr);
+          .addTo(m);
+        console.log("Drawing markers from plan");
         mkr.on("dragstart", (marker_event) => {
           console.log("Clicked on marker !");
           mkr.remove();
@@ -129,7 +131,9 @@ export default function Map({ plan, setPlan }) {
             };
           });
         });
+        markers.push(mkr);
       });
+      setMap(m);
     };
 
     initTT();
@@ -138,7 +142,7 @@ export default function Map({ plan, setPlan }) {
       markers.forEach((m) => m.remove());
       if (map && map.remove) map.remove();
     };
-  }, [mapLng, mapLat, mapZoom, plan, setPlan]);
+  }, [mapLng, mapLat, mapZoom]);
 
   // useEffect(() => {
 
