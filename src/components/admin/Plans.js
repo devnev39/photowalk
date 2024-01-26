@@ -12,6 +12,7 @@ import { useAppError } from "@/context/ErrorContext";
 import { useAppUserContext } from "@/context/AppUserContext";
 import { useConfirmDialogContext } from "@/context/ConfirmDialog";
 import { useEffect, useState } from "react";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 function RenderCheckBox(props) {
   return (
@@ -42,6 +43,7 @@ export default function Plans({
   setPlans,
   openPlanEditDialog,
   setFocusedPlan,
+  openImageUploadDialog,
 }) {
   const { showMessage } = useAppError();
 
@@ -126,10 +128,22 @@ export default function Plans({
             color="inherit"
             disabled={appUser.role !== "superuser"}
           />,
+          <GridActionsCellItem
+            key={id + "1"}
+            icon={<CloudUploadIcon />}
+            label="Upload"
+            onClick={handleUploadImageClick(id)}
+            color="inherit"
+          />,
         ];
       },
     },
   ];
+
+  const handleUploadImageClick = (id) => () => {
+    setFocusedPlan(plans.filter((row) => row.name === id)[0]);
+    openImageUploadDialog();
+  };
 
   const handleEditClick = (id) => () => {
     setFocusedPlan(plans.filter((row) => row.name === id)[0]);

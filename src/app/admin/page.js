@@ -27,6 +27,7 @@ import { useAppUserContext } from "@/context/AppUserContext";
 import { fetchDocsCollection, getUser, updateUser } from "@/api/store";
 import { useConfirmDialogContext } from "@/context/ConfirmDialog";
 import Images from "@/components/admin/Images";
+import PlanImageUploadDialog from "@/components/admin/PlanImageUploadDialog";
 
 export default function Page() {
   const [admin, setAdmin] = useState(null);
@@ -220,6 +221,9 @@ export default function Page() {
                     openPlanEditDialog={() => handleClickOpen("planDialog")}
                     plans={plans}
                     setPlans={setPlans}
+                    openImageUploadDialog={() =>
+                      handleClickOpen("planImageUploadDialog")
+                    }
                   />
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center", my: 5 }}>
@@ -278,6 +282,17 @@ export default function Page() {
           updatePlans={updatePlans}
           planObj={focusedPlan}
           setFocusedPlan={setFocusedPlan}
+          handleClose={handleClose}
+        />
+      </Dialog>
+      <Dialog
+        open={open && dialog === "planImageUploadDialog"}
+        onClose={handleClose}
+      >
+        <PlanImageUploadDialog
+          updatePlans={updatePlans}
+          planObj={focusedPlan}
+          setFocusedPlan={setFocusedUser}
           handleClose={handleClose}
         />
       </Dialog>
