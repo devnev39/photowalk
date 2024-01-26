@@ -18,7 +18,12 @@ import {
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
 const VisuallyHiddenInput = styled("input")({
@@ -40,6 +45,7 @@ export default function ImageDialog({
   handleClose,
 }) {
   const [image, setImage] = useState(!imageObj ? imageSchema : imageObj);
+  const [imageUploaded, setImageUploaded] = useState(false);
 
   const [file, setFile] = useState(null);
 
@@ -103,9 +109,20 @@ export default function ImageDialog({
     }
   };
 
-  // const fileUploaded = (event) => {
-  //     setFile(event.target.files.length)
-  // }
+  const deleteUploadedImage = async () => {
+    if (!image || !image.path) {
+      showMessage("Image or Image url not found !", "info");
+      return;
+    }
+    const fileRef = ref(storage, image.path);
+    deleteObject(fileRef)
+      .then(() => {
+        showMessage("Image deleted !", "info");
+      })
+      .catch((err) => {
+        showMessage(err.message, "error");
+      });
+  };
 
   const uploadImage = async () => {
     try {
@@ -116,6 +133,7 @@ export default function ImageDialog({
         showMessage("File uploaded !", "info");
         getDownloadURL(snapshot.ref).then((downloadUrl) => {
           showMessage("Public url created !", "info");
+          setImageUploaded(true);
           setImage((prev) => {
             return {
               ...prev,
@@ -250,6 +268,7 @@ export default function ImageDialog({
       <DialogActions>
         <Button
           onClick={() => {
+            if (imageUploaded) deleteUploadedImage();
             setFocusedImage(null);
             handleClose();
           }}
