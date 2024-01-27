@@ -194,6 +194,7 @@ export default function PlanDialog({
             handleClose();
           }}
           variant="outlined"
+          color="error"
         >
           Cancel
         </Button>

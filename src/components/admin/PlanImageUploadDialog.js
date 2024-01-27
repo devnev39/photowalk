@@ -214,7 +214,7 @@ export default function PlanImageUploadDialog({
           Upload Image
         </LoadingButton>
         <Button variant="outlined" color="error" onClick={cancelImageUpload}>
-          Close
+          Cancel
         </Button>
       </DialogActions>
     </>

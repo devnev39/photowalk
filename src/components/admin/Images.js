@@ -84,14 +84,14 @@ export default function Images({
         return [
           <GridActionsCellItem
             key={id}
-            icon={<EditIcon />}
+            icon={<EditIcon color="info" />}
             label="Edit"
             onClick={handleEditClick(id)}
             color="inherit"
           />,
           <GridActionsCellItem
             key={id + "1"}
-            icon={<DeleteIcon />}
+            icon={<DeleteIcon color="error" />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"

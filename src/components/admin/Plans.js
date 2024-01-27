@@ -114,7 +114,7 @@ export default function Plans({
         return [
           <GridActionsCellItem
             key={id}
-            icon={<EditIcon />}
+            icon={<EditIcon color="info" />}
             label="Edit"
             onClick={handleEditClick(id)}
             color="inherit"
@@ -122,18 +122,18 @@ export default function Plans({
           />,
           <GridActionsCellItem
             key={id + "1"}
-            icon={<DeleteIcon />}
+            icon={<CloudUploadIcon color="secondary" />}
+            label="Upload"
+            onClick={handleUploadImageClick(id)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            key={id + "1"}
+            icon={<DeleteIcon color="error" />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
             disabled={appUser.role !== "superuser"}
-          />,
-          <GridActionsCellItem
-            key={id + "1"}
-            icon={<CloudUploadIcon />}
-            label="Upload"
-            onClick={handleUploadImageClick(id)}
-            color="inherit"
           />,
         ];
       },

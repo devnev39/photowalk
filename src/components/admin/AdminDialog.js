@@ -191,7 +191,7 @@ export default function AdminDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} variant="outlined">
+        <Button onClick={handleClose} variant="outlined" color="error">
           Cancel
         </Button>
         <LoadingButton

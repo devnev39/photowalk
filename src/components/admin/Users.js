@@ -86,14 +86,14 @@ export default function Users({
         return [
           <GridActionsCellItem
             key={props.id}
-            icon={<EditIcon />}
+            icon={<EditIcon color="info" />}
             label="Edit"
             onClick={handleEditClick(props)}
             color="inherit"
           />,
           <GridActionsCellItem
             key={props.id + "1"}
-            icon={<DeleteIcon />}
+            icon={<DeleteIcon color="error" />}
             label="Delete"
             onClick={handleDeleteClick(props)}
             color="inherit"

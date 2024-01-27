@@ -33,12 +33,6 @@ import { useConfirmDialogContext } from "@/context/ConfirmDialog";
 import Images from "@/components/admin/Images";
 import PlanImageUploadDialog from "@/components/admin/PlanImageUploadDialog";
 
-// const theme = createTheme({
-//   palette : {
-//     mode: "dark"
-//   }
-// });
-
 export default function Page() {
   const [admin, setAdmin] = useState(null);
   const { user, logout } = UserAuth();
@@ -67,6 +61,18 @@ export default function Page() {
       createTheme({
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
+        },
+        components: {
+          MuiCheckbox: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiIcon: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
         },
       }),
     [prefersDarkMode],
@@ -173,7 +179,7 @@ export default function Page() {
             <Grid container gap={1}>
               <Grid
                 item
-                xs={2}
+                xs={2.5}
                 sx={{ width: "100%", borderRight: "solid 1px", pr: "1%" }}
               >
                 <Box
@@ -183,7 +189,7 @@ export default function Page() {
                     width: "100%",
                   }}
                 >
-                  <Box>
+                  <Box sx={{ mt: "1rem" }}>
                     <Typography variant="h5">Welcome {admin.name} !</Typography>
                     <Typography>{admin.email}</Typography>
                   </Box>

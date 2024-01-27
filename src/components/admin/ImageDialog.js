@@ -273,6 +273,7 @@ export default function ImageDialog({
             handleClose();
           }}
           variant="outlined"
+          color="error"
         >
           Cancel
         </Button>
