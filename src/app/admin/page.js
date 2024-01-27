@@ -2,16 +2,20 @@
 import {
   Box,
   Button,
+  CssBaseline,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Grid,
+  ThemeProvider,
   Toolbar,
   Typography,
+  createTheme,
+  useMediaQuery,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UserAuth } from "@/config/AuthContext";
 import { useAppError } from "@/context/ErrorContext";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -28,6 +32,12 @@ import { fetchDocsCollection, getUser, updateUser } from "@/api/store";
 import { useConfirmDialogContext } from "@/context/ConfirmDialog";
 import Images from "@/components/admin/Images";
 import PlanImageUploadDialog from "@/components/admin/PlanImageUploadDialog";
+
+// const theme = createTheme({
+//   palette : {
+//     mode: "dark"
+//   }
+// });
 
 export default function Page() {
   const [admin, setAdmin] = useState(null);
@@ -49,6 +59,18 @@ export default function Page() {
   const ConfirmDialogProps = useConfirmDialogContext();
 
   const { setAppUser } = useAppUserContext();
+
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? "dark" : "light",
+        },
+      }),
+    [prefersDarkMode],
+  );
 
   const updateUsers = async () => {
     setUsers(await fetchDocsCollection("users"));
@@ -127,207 +149,216 @@ export default function Page() {
 
   return (
     <>
-      <Toolbar />
-      {!user ? (
-        <Box
-          sx={{
-            height: "80vh",
-            justifyContent: "center",
-            alignItems: "center",
-            display: "flex",
-          }}
-        >
-          <Typography variant="h3">
-            Need to login to view this page !
-          </Typography>
-        </Box>
-      ) : null}
-      {admin ? (
-        <Box
-          sx={{ display: "flex", flexGrow: 1, height: "85vh", width: "100%" }}
-        >
-          <Grid container gap={1}>
-            <Grid
-              item
-              xs={2}
-              sx={{ width: "100%", borderRight: "solid 1px", pr: "1%" }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  width: "100%",
-                }}
-              >
-                <Box>
-                  <Typography variant="h5">Welcome {admin.name} !</Typography>
-                  <Typography>{admin.email}</Typography>
-                </Box>
-              </Box>
-              <Box
-                sx={{ display: "flex", alignItems: "center", height: "100%" }}
-              >
-                <Box sx={{ width: "100%" }}>
-                  {menu.map((m) => (
-                    <Button
-                      key={m}
-                      onClick={() => setCurrentComponent(m)}
-                      variant={
-                        currentComponent === m ? "contained" : "outlined"
-                      }
-                      sx={{ width: "100%", my: 1 }}
-                    >
-                      {m}
-                    </Button>
-                  ))}
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={8}>
-              <Box
-                sx={{
-                  display: currentComponent === "Users" ? "block" : "none",
-                }}
-              >
-                {/* Users block */}
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Users
-                    users={users}
-                    updateUsers={updateUsers}
-                    openUserEditDialog={() => handleClickOpen("adminDialog")}
-                    setFocusedUser={setFocusedUser}
-                  />
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", my: 5 }}>
-                  <Button
-                    variant="outlined"
-                    startIcon={<AdminPanelSettingsIcon />}
-                    onClick={() => handleClickOpen("adminDialog")}
-                  >
-                    Add Admin User
-                  </Button>
-                </Box>
-                {/* Users block end */}
-              </Box>
-              <Box
-                sx={{
-                  display: currentComponent === "Plans" ? "block" : "none",
-                }}
-              >
-                {/* Plans block */}
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Plans
-                    setFocusedPlan={setFocusedPlan}
-                    openPlanEditDialog={() => handleClickOpen("planDialog")}
-                    plans={plans}
-                    setPlans={setPlans}
-                    openImageUploadDialog={() =>
-                      handleClickOpen("planImageUploadDialog")
-                    }
-                  />
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", my: 5 }}>
-                  <Button
-                    disabled={
-                      !admin.can_createplan && admin.role !== "superuser"
-                    }
-                    variant="outlined"
-                    startIcon={<HikingIcon />}
-                    onClick={() => handleClickOpen("planDialog")}
-                  >
-                    Add Plan
-                  </Button>
-                </Box>
-                {/* Plans block end */}
-              </Box>
-              <Box
-                sx={{
-                  display: currentComponent === "Images" ? "block" : "none",
-                }}
-              >
-                {/* Images block */}
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Images
-                    images={images}
-                    setFocusedImage={setFocusedImage}
-                    setImages={setImages}
-                    openImageEditDialog={() => handleClickOpen("imageDialog")}
-                  />
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", my: 5 }}>
-                  <Button
-                    variant="outlined"
-                    startIcon={<AddPhotoAlternateIcon />}
-                    onClick={() => handleClickOpen("imageDialog")}
-                  >
-                    Add new image
-                  </Button>
-                </Box>
-                {/* Images block end */}
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-      ) : null}
-      <Dialog open={open && dialog === "adminDialog"} onClose={handleClose}>
-        <AdminDialog
-          setFocusedUser={setFocusedUser}
-          userObj={focusedUser}
-          updateUsers={updateUsers}
-          handleClose={handleClose}
-        />
-      </Dialog>
-      <Dialog open={open && dialog === "planDialog"} onClose={handleClose}>
-        <PlanDialog
-          updatePlans={updatePlans}
-          planObj={focusedPlan}
-          setFocusedPlan={setFocusedPlan}
-          handleClose={handleClose}
-        />
-      </Dialog>
-      <Dialog
-        open={open && dialog === "planImageUploadDialog"}
-        onClose={handleClose}
-      >
-        <PlanImageUploadDialog
-          updatePlans={updatePlans}
-          planObj={focusedPlan}
-          setFocusedPlan={setFocusedUser}
-          handleClose={handleClose}
-        />
-      </Dialog>
-      <Dialog open={open && dialog === "imageDialog"} onClose={handleClose}>
-        <ImageDialog
-          updateImages={updateImages}
-          imageObj={focusedImage}
-          setFocusedImage={setFocusedImage}
-          handleClose={handleClose}
-        />
-      </Dialog>
-      <Dialog
-        keepMounted
-        open={ConfirmDialogProps.open}
-        onClose={ConfirmDialogProps.handleClose}
-      >
-        <DialogTitle>{ConfirmDialogProps.dialogTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {ConfirmDialogProps.dialogContent}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={ConfirmDialogProps.handleClose} variant="outlined">
-            Cancel
-          </Button>
-          <Button
-            onClick={ConfirmDialogProps.Confirm}
-            variant="outlined"
-            color="error"
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Toolbar />
+        {!user ? (
+          <Box
+            sx={{
+              height: "80vh",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
           >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <Typography variant="h3">
+              Need to login to view this page !
+            </Typography>
+          </Box>
+        ) : null}
+        {admin ? (
+          <Box
+            sx={{ display: "flex", flexGrow: 1, height: "85vh", width: "100%" }}
+          >
+            <Grid container gap={1}>
+              <Grid
+                item
+                xs={2}
+                sx={{ width: "100%", borderRight: "solid 1px", pr: "1%" }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h5">Welcome {admin.name} !</Typography>
+                    <Typography>{admin.email}</Typography>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", height: "100%" }}
+                >
+                  <Box sx={{ width: "100%" }}>
+                    {menu.map((m) => (
+                      <Button
+                        key={m}
+                        onClick={() => setCurrentComponent(m)}
+                        variant={
+                          currentComponent === m ? "contained" : "outlined"
+                        }
+                        sx={{ width: "100%", my: 1 }}
+                      >
+                        {m}
+                      </Button>
+                    ))}
+                  </Box>
+                </Box>
+              </Grid>
+              <Grid item xs={8}>
+                <Box
+                  sx={{
+                    display: currentComponent === "Users" ? "block" : "none",
+                  }}
+                >
+                  {/* Users block */}
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Users
+                      users={users}
+                      updateUsers={updateUsers}
+                      openUserEditDialog={() => handleClickOpen("adminDialog")}
+                      setFocusedUser={setFocusedUser}
+                    />
+                  </Box>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "center", my: 5 }}
+                  >
+                    <Button
+                      variant="outlined"
+                      startIcon={<AdminPanelSettingsIcon />}
+                      onClick={() => handleClickOpen("adminDialog")}
+                    >
+                      Add Admin User
+                    </Button>
+                  </Box>
+                  {/* Users block end */}
+                </Box>
+                <Box
+                  sx={{
+                    display: currentComponent === "Plans" ? "block" : "none",
+                  }}
+                >
+                  {/* Plans block */}
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Plans
+                      setFocusedPlan={setFocusedPlan}
+                      openPlanEditDialog={() => handleClickOpen("planDialog")}
+                      plans={plans}
+                      setPlans={setPlans}
+                      openImageUploadDialog={() =>
+                        handleClickOpen("planImageUploadDialog")
+                      }
+                    />
+                  </Box>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "center", my: 5 }}
+                  >
+                    <Button
+                      disabled={
+                        !admin.can_createplan && admin.role !== "superuser"
+                      }
+                      variant="outlined"
+                      startIcon={<HikingIcon />}
+                      onClick={() => handleClickOpen("planDialog")}
+                    >
+                      Add Plan
+                    </Button>
+                  </Box>
+                  {/* Plans block end */}
+                </Box>
+                <Box
+                  sx={{
+                    display: currentComponent === "Images" ? "block" : "none",
+                  }}
+                >
+                  {/* Images block */}
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Images
+                      images={images}
+                      setFocusedImage={setFocusedImage}
+                      setImages={setImages}
+                      openImageEditDialog={() => handleClickOpen("imageDialog")}
+                    />
+                  </Box>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "center", my: 5 }}
+                  >
+                    <Button
+                      variant="outlined"
+                      startIcon={<AddPhotoAlternateIcon />}
+                      onClick={() => handleClickOpen("imageDialog")}
+                    >
+                      Add new image
+                    </Button>
+                  </Box>
+                  {/* Images block end */}
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        ) : null}
+        <Dialog open={open && dialog === "adminDialog"} onClose={handleClose}>
+          <AdminDialog
+            setFocusedUser={setFocusedUser}
+            userObj={focusedUser}
+            updateUsers={updateUsers}
+            handleClose={handleClose}
+          />
+        </Dialog>
+        <Dialog open={open && dialog === "planDialog"} onClose={handleClose}>
+          <PlanDialog
+            updatePlans={updatePlans}
+            planObj={focusedPlan}
+            setFocusedPlan={setFocusedPlan}
+            handleClose={handleClose}
+          />
+        </Dialog>
+        <Dialog
+          open={open && dialog === "planImageUploadDialog"}
+          onClose={handleClose}
+        >
+          <PlanImageUploadDialog
+            updatePlans={updatePlans}
+            planObj={focusedPlan}
+            setFocusedPlan={setFocusedUser}
+            handleClose={handleClose}
+          />
+        </Dialog>
+        <Dialog open={open && dialog === "imageDialog"} onClose={handleClose}>
+          <ImageDialog
+            updateImages={updateImages}
+            imageObj={focusedImage}
+            setFocusedImage={setFocusedImage}
+            handleClose={handleClose}
+          />
+        </Dialog>
+        <Dialog
+          keepMounted
+          open={ConfirmDialogProps.open}
+          onClose={ConfirmDialogProps.handleClose}
+        >
+          <DialogTitle>{ConfirmDialogProps.dialogTitle}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {ConfirmDialogProps.dialogContent}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={ConfirmDialogProps.handleClose} variant="outlined">
+              Cancel
+            </Button>
+            <Button
+              onClick={ConfirmDialogProps.Confirm}
+              variant="outlined"
+              color="error"
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </ThemeProvider>
     </>
   );
 }
