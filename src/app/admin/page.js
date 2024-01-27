@@ -213,91 +213,108 @@ export default function Page() {
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs>
                 <Box
                   sx={{
-                    display: currentComponent === "Users" ? "block" : "none",
+                    display: currentComponent === "Users" ? "flex" : "none",
+                    justifyContent: "center",
+                    mt: "1rem",
+                    width: "100%",
                   }}
                 >
                   {/* Users block */}
-                  <Box sx={{ display: "flex", justifyContent: "center" }}>
-                    <Users
-                      users={users}
-                      updateUsers={updateUsers}
-                      openUserEditDialog={() => handleClickOpen("adminDialog")}
-                      setFocusedUser={setFocusedUser}
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", justifyContent: "center", my: 5 }}
-                  >
-                    <Button
-                      variant="outlined"
-                      startIcon={<AdminPanelSettingsIcon />}
-                      onClick={() => handleClickOpen("adminDialog")}
+                  <Box>
+                    <Box>
+                      <Users
+                        users={users}
+                        updateUsers={updateUsers}
+                        openUserEditDialog={() =>
+                          handleClickOpen("adminDialog")
+                        }
+                        setFocusedUser={setFocusedUser}
+                      />
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", my: 5 }}
                     >
-                      Add Admin User
-                    </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<AdminPanelSettingsIcon />}
+                        onClick={() => handleClickOpen("adminDialog")}
+                      >
+                        Add Admin User
+                      </Button>
+                    </Box>
                   </Box>
                   {/* Users block end */}
                 </Box>
                 <Box
                   sx={{
-                    display: currentComponent === "Plans" ? "block" : "none",
+                    display: currentComponent === "Plans" ? "flex" : "none",
+                    justifyContent: "center",
+                    mt: "1rem",
                   }}
                 >
                   {/* Plans block */}
-                  <Box sx={{ display: "flex", justifyContent: "center" }}>
-                    <Plans
-                      setFocusedPlan={setFocusedPlan}
-                      openPlanEditDialog={() => handleClickOpen("planDialog")}
-                      plans={plans}
-                      setPlans={setPlans}
-                      openImageUploadDialog={() =>
-                        handleClickOpen("planImageUploadDialog")
-                      }
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", justifyContent: "center", my: 5 }}
-                  >
-                    <Button
-                      disabled={
-                        !admin.can_createplan && admin.role !== "superuser"
-                      }
-                      variant="outlined"
-                      startIcon={<HikingIcon />}
-                      onClick={() => handleClickOpen("planDialog")}
+                  <Box>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Plans
+                        setFocusedPlan={setFocusedPlan}
+                        openPlanEditDialog={() => handleClickOpen("planDialog")}
+                        plans={plans}
+                        setPlans={setPlans}
+                        openImageUploadDialog={() =>
+                          handleClickOpen("planImageUploadDialog")
+                        }
+                      />
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", my: 5 }}
                     >
-                      Add Plan
-                    </Button>
+                      <Button
+                        disabled={
+                          !admin.can_createplan && admin.role !== "superuser"
+                        }
+                        variant="outlined"
+                        startIcon={<HikingIcon />}
+                        onClick={() => handleClickOpen("planDialog")}
+                      >
+                        Add Plan
+                      </Button>
+                    </Box>
                   </Box>
                   {/* Plans block end */}
                 </Box>
                 <Box
                   sx={{
-                    display: currentComponent === "Images" ? "block" : "none",
+                    display: currentComponent === "Images" ? "flex" : "none",
+                    justifyContent: "center",
+                    mt: "1rem",
                   }}
                 >
                   {/* Images block */}
-                  <Box sx={{ display: "flex", justifyContent: "center" }}>
-                    <Images
-                      images={images}
-                      setFocusedImage={setFocusedImage}
-                      setImages={setImages}
-                      openImageEditDialog={() => handleClickOpen("imageDialog")}
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", justifyContent: "center", my: 5 }}
-                  >
-                    <Button
-                      variant="outlined"
-                      startIcon={<AddPhotoAlternateIcon />}
-                      onClick={() => handleClickOpen("imageDialog")}
+                  <Box>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Images
+                        images={images}
+                        setFocusedImage={setFocusedImage}
+                        setImages={setImages}
+                        openImageEditDialog={() =>
+                          handleClickOpen("imageDialog")
+                        }
+                      />
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", my: 5 }}
                     >
-                      Add new image
-                    </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<AddPhotoAlternateIcon />}
+                        onClick={() => handleClickOpen("imageDialog")}
+                      >
+                        Add new image
+                      </Button>
+                    </Box>
                   </Box>
                   {/* Images block end */}
                 </Box>

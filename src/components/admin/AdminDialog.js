@@ -191,7 +191,14 @@ export default function AdminDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} variant="outlined" color="error">
+        <Button
+          onClick={() => {
+            setFocusedUser(null);
+            handleClose();
+          }}
+          variant="outlined"
+          color="error"
+        >
           Cancel
         </Button>
         <LoadingButton
